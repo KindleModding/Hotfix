@@ -35,7 +35,7 @@ jobs:
         path: ./utils/kindletool
     - name: build
       run: |
-          chmod +x ./utils/kindletool
+          chmod 755 ./utils/kindletool
           chown -R $USER: ./utils/
           sh ./build.sh
     - uses: actions/upload-artifact@v4
