@@ -12,6 +12,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: kindletool
+      run: |
+          sudo apt-get install -y zlib1g-dev libarchive-dev nettle-dev
+          rm ./utils/kindletool
+          git clone https://github.com/NiLuJe/KindleTool
+          cd KindleTool
+          make install
     - name: build
       run: sh ./build.sh
     - uses: actions/upload-artifact@v4
