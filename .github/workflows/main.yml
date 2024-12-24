@@ -33,12 +33,11 @@ jobs:
       with:
         name: kindletool
         path: ./utils/kindletool
-    - name: Fix KindleTool perms
+    - name: build
       run: |
           chmod +x ./utils/kindletool
           chown -R $USER: ./utils/
-    - name: build
-      run: sh ./build.sh
+          sh ./build.sh
     - uses: actions/upload-artifact@v4
       with:
         name: Update_hotfix_universal
