@@ -13,7 +13,6 @@ jobs:
     - uses: actions/checkout@v4
       with:
         name: NiLuJe/KindleTool
-        ref: refs/heads/release
     - name: Compile KindleTool
       run: |
           sudo apt-get install -y zlib1g-dev libarchive-dev nettle-dev
