@@ -34,7 +34,9 @@ jobs:
         name: kindletool
         path: ./utils/kindletool
     - name: Fix KindleTool perms
-      run: chmod +x ./utils/kindletool
+      run: |
+          chmod +x ./utils/kindletool
+          chown -R $USER: ./utils/
     - name: build
       run: sh ./build.sh
     - uses: actions/upload-artifact@v4
