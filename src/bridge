@@ -2,11 +2,11 @@
 #
 # Kindle FW 5.x JailBreak Bridge
 #
-# $Id: bridge.sh 19326 2023-12-02 22:24:27Z NiLuJe $
+# $Id: bridge.sh 19426 2024-04-20 20:03:17Z NiLuJe $
 #
 ##
 
-BRIDGE_REV="$( echo '$Revision: 19326 $' | cut -d ' ' -f 2 )"
+BRIDGE_REV="$( echo '$Revision: 19426 $' | cut -d ' ' -f 2 )"
 
 ROOT=""
 ROOTPART="mmcblk0p1"
@@ -526,12 +526,23 @@ print_dispatch_feedback()
 	eips $(((${EIPS_MAXCHARS} - ${#kh_eips_string}) / 2)) $((${EIPS_MAXLINES} - 2)) "${kh_eips_string}"
 }
 
-print_log_feedback()
+print_log_pillow_feedback()
 {
 	# We need to know our model
 	check_model
 	# Prepare our stuff...
 	kh_eips_string="   **** LOG ****   "
+
+	# And finally, show our message, centered on the bottom of the screen
+	eips $(((${EIPS_MAXCHARS} - ${#kh_eips_string}) / 2)) $((${EIPS_MAXLINES} - 2)) "${kh_eips_string}"
+}
+
+print_log_kpp_feedback()
+{
+	# We need to know our model
+	check_model
+	# Prepare our stuff...
+	kh_eips_string=" **** LOG KPP **** "
 
 	# And finally, show our message, centered on the bottom of the screen
 	eips $(((${EIPS_MAXCHARS} - ${#kh_eips_string}) / 2)) $((${EIPS_MAXLINES} - 2)) "${kh_eips_string}"
@@ -726,15 +737,28 @@ install_dispatch()
 	print_dispatch_feedback
 }
 
-install_log()
+install_log_pillow()
 {
 	mount_root_rw
-	logmsg "I" "install_log" "" "Patching in the dispatch command"
+	logmsg "I" "install_log_pillow" "" "Patching in the dispatch command for pillow"
+	# Pillow (old UI)
 	sed -e '/^{/a\' -e '    ";log" : "/usr/bin/logThis.sh",' -i "${ROOT}/usr/share/webkit-1.0/pillow/debug_cmds.json"
 	mount_ro
 
 	# Show some feedback
-	print_log_feedback
+	print_log_pillow_feedback
+}
+
+install_log_kpp()
+{
+	mount_root_rw
+	logmsg "I" "install_log_kpp" "" "Patching in the dispatch command for kpp"
+	# KPP (React, new UI)
+	sed -e '/^{/a\' -e '    ";log" : "/usr/bin/logThis.sh",' -i "${ROOT}/usr/share/app/kpp_sys_cmds.json"
+	mount_ro
+
+	# Show some feedback
+	print_log_kpp_feedback
 }
 
 install_bridge_job()
@@ -883,7 +907,14 @@ fi
 # Check if we need to do something about the dispatch command
 if [ -f "${ROOT}/usr/share/webkit-1.0/pillow/debug_cmds.json" ] ; then
 	if ! grep -q "logThis.sh" "${ROOT}/usr/share/webkit-1.0/pillow/debug_cmds.json" ; then
-		install_log
+		install_log_pillow
+	fi
+fi
+
+# Check if we need to do something about the dispatch command (for the new React UI, ca. >= 5.16.5)
+if [ -f "${ROOT}/usr/share/app/kpp_sys_cmds.json" ] ; then
+	if ! grep -q "logThis.sh" "${ROOT}/usr/share/app/kpp_sys_cmds.json" ; then
+		install_log_kpp
 	fi
 fi
 

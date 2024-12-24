@@ -17,7 +17,12 @@ MKK_PERSISTENT_STORAGE="/var/local/mkk"
 RP_PERSISTENT_STORAGE="/var/local/rp"
 MKK_BACKUP_STORAGE="/mnt/us/mkk"
 RP_BACKUP_STORAGE="/mnt/us/rp"
+ARCH="armel"
 
+# Check if the Kindle is ARMHF or ARMLF
+if ls /lib | grep ld-linux-armhf.so; then
+    ARCH="armhf"
+fi
 
 ## Here we go :)
 otautils_update_progressbar
@@ -26,7 +31,7 @@ otautils_update_progressbar
 logmsg "I" "install" "" "Installing the bridge"
 mkdir -p "/var/local/system"
 rm -rf "/var/local/system/fixup"
-cp -f bridge "/var/local/system/fixup"
+cp -f $arch/bridge "/var/local/system/fixup"
 chown root:root "/var/local/system/fixup"
 chmod a+rx "/var/local/system/fixup"
 
@@ -35,7 +40,7 @@ otautils_update_progressbar
 # Install FBInk
 logmsg "I" "install" "" "Installing fbink"
 mkdir -p "/mnt/us/libkh/bin"
-cp -f fbink "/mnt/us/libkh/bin/fbink"
+cp -f $arch/fbink "/mnt/us/libkh/bin/fbink"
 chmod a+rx "/mnt/us/libkh/bin/fbink"
 
 otautils_update_progressbar
