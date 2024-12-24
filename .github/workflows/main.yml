@@ -6,19 +6,37 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-
+  kindletool:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: kindletool
+      with:
+        name: NiLuJe/KindleTool
+        ref: refs/heads/release
+    - name: Compile KindleTool
       run: |
           sudo apt-get install -y zlib1g-dev libarchive-dev nettle-dev
-          rm ./utils/kindletool
-          git clone https://github.com/NiLuJe/KindleTool
           cd KindleTool
-          make install
+          make
+    - uses: actions/upload-artifact@v4
+      with:
+        name: kindletool
+        path: KindleTool/Release/kindletool
+  build:
+    runs-on: ubuntu-latest
+    needs: kindletool
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Remove old Kindletool
+      run: rm -f ./utils/kindletool
+    - uses: actions/download-artifact@v4
+      with:
+        name: kindletool
+        path: ./utils/kindletool
+    - name: Fix KindleTool perms
+      run: chmod +x ./utils/kindletool
     - name: build
       run: sh ./build.sh
     - uses: actions/upload-artifact@v4
