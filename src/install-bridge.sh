@@ -31,7 +31,7 @@ otautils_update_progressbar
 logmsg "I" "install" "" "Installing the bridge"
 mkdir -p "/var/local/system"
 rm -rf "/var/local/system/fixup"
-cp -f $arch/bridge "/var/local/system/fixup"
+cp -f $ARCH/bridge "/var/local/system/fixup"
 chown root:root "/var/local/system/fixup"
 chmod a+rx "/var/local/system/fixup"
 
@@ -40,7 +40,7 @@ otautils_update_progressbar
 # Install FBInk
 logmsg "I" "install" "" "Installing fbink"
 mkdir -p "/mnt/us/libkh/bin"
-cp -f $arch/fbink "/mnt/us/libkh/bin/fbink"
+cp -f $ARCH/fbink "/mnt/us/libkh/bin/fbink"
 chmod a+rx "/mnt/us/libkh/bin/fbink"
 
 otautils_update_progressbar
