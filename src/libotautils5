@@ -1,0 +1,418 @@
+##
+#
+#  Logging/Progressbar handling for OTA update scripts
+#
+#  $Id: libotautils5 19277 2023-10-30 23:34:16Z NiLuJe $
+#
+#  kate: syntax bash;
+#  shellcheck shell=sh
+#
+##
+
+## Logging
+# Pull some helper functions for logging
+_FUNCTIONS=/etc/upstart/functions
+[ -f ${_FUNCTIONS} ] && source ${_FUNCTIONS}
+
+# Make sure HACKNAME is set (NOTE: This should be overriden in the update script)
+[ -z "${HACKNAME}" ] && HACKNAME="ota_script"
+
+
+# Adapt the K5 logging calls to the simpler legacy syntax
+logmsg()
+{
+	f_log "${1}" "${HACKNAME}" "${2}" "${3}" "${4}"
+	# Add our own echo, like on legacy devices (useful for MRPI logging, since f_log's one is sent to /dev/console)
+	if [ "${1}" != "D" ] ; then
+		echo "system: ${1} ${HACKNAME}:${2}:${3}:${4}"
+	fi
+}
+
+
+# We need to get the proper constants for our model...
+kmfc="$(cut -c1 /proc/usid)"
+if [ "${kmfc}" == "B" ] || [ "${kmfc}" == "9" ] ; then
+	# Older device ID scheme
+	kmodel="$(cut -c3-4 /proc/usid)"
+	case "${kmodel}" in
+		"13" | "54" | "2A" | "4F" | "52" | "53" )
+			# Voyage...
+			SCREEN_X_RES=1088	# NOTE: Yes, 1088, not 1072 or 1080...
+			SCREEN_Y_RES=1448
+			EIPS_X_RES=16
+			EIPS_Y_RES=24		# Manually measured, should be accurate.
+		;;
+		"24" | "1B" | "1D" | "1F" | "1C" | "20" | "D4" | "5A" | "D5" | "D6" | "D7" | "D8" | "F2" | "17" | "60" | "F4" | "F9" | "62" | "61" | "5F" )
+			# PaperWhite...
+			SCREEN_X_RES=768	# NOTE: Yes, 768, not 758...
+			SCREEN_Y_RES=1024
+			EIPS_X_RES=16
+			EIPS_Y_RES=24		# Manually measured, should be accurate.
+		;;
+		"C6" | "DD" )
+			# KT2...
+			SCREEN_X_RES=608
+			SCREEN_Y_RES=800
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"0F" | "11" | "10" | "12" )
+			# Touch
+			SCREEN_X_RES=600	# _v_width @ upstart/functions
+			SCREEN_Y_RES=800	# _v_height @ upstart/functions
+			EIPS_X_RES=12		# from f_puts @ upstart/functions
+			EIPS_Y_RES=20		# from f_puts @ upstart/functions
+		;;
+		* )
+			# Handle legacy devices...
+			if [ -f "/etc/rc.d/functions" ] && grep -q "EIPS" "/etc/rc.d/functions" ; then
+				. /etc/rc.d/functions
+			else
+				# Fallback... We shouldn't ever hit that.
+				SCREEN_X_RES=600
+				SCREEN_Y_RES=800
+				EIPS_X_RES=12
+				EIPS_Y_RES=20
+			fi
+		;;
+	esac
+else
+	# Try the new device ID scheme...
+	kmodel="$(cut -c4-6 /proc/usid)"
+	case "${kmodel}" in
+		"0G1" | "0G2" | "0G4" | "0G5" | "0G6" | "0G7" | "0KB" | "0KC" | "0KD" | "0KE" | "0KF" | "0KG" | "0LK" | "0LL" )
+			# PW3...
+			SCREEN_X_RES=1088
+			SCREEN_Y_RES=1448
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"0GC" | "0GD" | "0GR" | "0GS" | "0GT" | "0GU" )
+			# Oasis...
+			SCREEN_X_RES=1088
+			SCREEN_Y_RES=1448
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"0DU" | "0K9" | "0KA" )
+			# KT3...
+			SCREEN_X_RES=608
+			SCREEN_Y_RES=800
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"0LM" | "0LN" | "0LP" | "0LQ" | "0P1" | "0P2" | "0P6" | "0P7" | "0P8" | "0S1" | "0S2" | "0S3" | "0S4" | "0S7" | "0SA" )
+			# Oasis 2...
+			SCREEN_X_RES=1280
+			SCREEN_Y_RES=1680
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"0PP" | "0T1" | "0T2" | "0T3" | "0T4" | "0T5" | "0T6" | "0T7" | "0TJ" | "0TK" | "0TL" | "0TM" | "0TN" | "102" | "103" | "16Q" | "16R" | "16S" | "16T" | "16U" | "16V" )
+			# PW4...
+			SCREEN_X_RES=1088
+			SCREEN_Y_RES=1448
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"10L" | "0WF" | "0WG" | "0WH" | "0WJ" | "0VB" )
+			# KT4...
+			SCREEN_X_RES=608
+			SCREEN_Y_RES=800
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"11L" | "0WQ" | "0WP" | "0WN" | "0WM" | "0WL" )
+			# Oasis 3...
+			SCREEN_X_RES=1280
+			SCREEN_Y_RES=1680
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"1LG" | "1Q0" | "1PX" | "1VD" | "219" | "21A" | "2BH" | "2BJ" | "2DK" )
+			# PaperWhite 5...
+			SCREEN_X_RES=1236
+			SCREEN_Y_RES=1648
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"22D" | "25T" | "23A" | "2AQ" | "2AP" | "1XH" | "22C" )
+			# Kindle Basic 4...
+			SCREEN_X_RES=1072
+			SCREEN_Y_RES=1448
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		"27J" | "2BL" | "263" | "227" | "2BM" | "23L" | "23M" | "270" )
+			# Kindle Scribe...
+			SCREEN_X_RES=1860
+			SCREEN_Y_RES=2480
+			EIPS_X_RES=16
+			EIPS_Y_RES=24
+		;;
+		* )
+			# Fallback... We shouldn't ever hit that.
+			SCREEN_X_RES=600
+			SCREEN_Y_RES=800
+			EIPS_X_RES=12
+			EIPS_Y_RES=20
+		;;
+	esac
+fi
+# And now we can do the maths ;)
+EIPS_MAXCHARS="$((${SCREEN_X_RES} / ${EIPS_X_RES}))"
+EIPS_MAXLINES="$((${SCREEN_Y_RES} / ${EIPS_Y_RES}))"
+
+
+# Adapted from libkh[5]
+## Check if we have an FBInk binary available somewhere...
+# Default to something that won't horribly blow up...
+FBINK_BIN="true"
+for my_hackdir in linkss linkfonts libkh usbnet ; do
+	my_fbink="/mnt/us/${my_hackdir}/bin/fbink"
+	if [ -x "${my_fbink}" ] ; then
+		FBINK_BIN="${my_fbink}"
+		# Got it!
+		break
+	fi
+done
+has_fbink()
+{
+	# Because the fallback is the "true" binary/shell built-in ;).
+	if [ "${FBINK_BIN}" != "true" ] ; then
+		# Got it!
+		return 0
+	fi
+
+	# If we got this far, we don't have fbink installed
+	return 1
+}
+
+do_fbink_print()
+{
+	# We need at least two args
+	if [ $# -lt 2 ] ; then
+		echo "not enough arguments passed to do_fbink_print ($# while we need at least 2)"
+		return
+	fi
+
+	kh_eips_string="${1}"
+	kh_eips_y_shift_up="${2}"
+
+	# Unlike eips, we need at least a single space to even try to print something ;).
+	if [ "${kh_eips_string}" == "" ] ; then
+		kh_eips_string=" "
+	fi
+
+	# Check if we asked for a highlighted message...
+	if [ "${3}" == "h" ] ; then
+		fbink_extra_args="h"
+	else
+		fbink_extra_args=""
+	fi
+
+	# NOTE: FBInk will handle the padding. FBInk's default font is square, not tall like eips,
+	#       so we compensate by tweaking the baseline ;).
+	${FBINK_BIN} -qpm${fbink_extra_args} -y $(( -4 - ${kh_eips_y_shift_up} )) "${kh_eips_string}"
+}
+
+do_fbink_bar()
+{
+	# We need at least two args
+	if [ $# -lt 2 ] ; then
+		echo "not enough arguments passed to do_fbink_bar ($# while we need at least 2)"
+		return
+	fi
+
+	fbink_progress="${1}"
+	kh_eips_y_shift_up="${2}"
+
+	${FBINK_BIN} -qP ${fbink_progress} -y $(( -4 - ${kh_eips_y_shift_up} ))
+}
+
+do_eips_print()
+{
+	# We need at least two args
+	if [ $# -lt 2 ] ; then
+		echo "not enough arguments passed to do_eips_print ($# while we need at least 2)"
+		return
+	fi
+
+	kh_eips_string="${1}"
+	kh_eips_y_shift_up="${2}"
+
+	# Get the real string length now
+	kh_eips_strlen="${#kh_eips_string}"
+
+	# Add the right amount of left & right padding, since we're centered, and eips doesn't trigger a full refresh,
+	# so we'll have to padd our string with blank spaces to make sure two consecutive messages don't run into each other
+	kh_padlen="$(((${EIPS_MAXCHARS} - ${kh_eips_strlen}) / 2))"
+
+	# Left padding...
+	while [ ${#kh_eips_string} -lt $((${kh_eips_strlen} + ${kh_padlen})) ] ; do
+		kh_eips_string=" ${kh_eips_string}"
+	done
+
+	# Right padding (crop to the edge of the screen)
+	while [ ${#kh_eips_string} -lt ${EIPS_MAXCHARS} ] ; do
+		kh_eips_string="${kh_eips_string} "
+	done
+
+	# And finally, show our formatted message centered on the bottom of the screen (NOTE: Redirect to /dev/null to kill unavailable character & pixel not in range warning messages)
+	eips 0 $((${EIPS_MAXLINES} - 2 - ${kh_eips_y_shift_up})) "${kh_eips_string}" >/dev/null
+}
+
+eips_print_bottom_centered()
+{
+	# We need at least two args
+	if [ $# -lt 2 ] ; then
+		echo "not enough arguments passed to eips_print_bottom_centered ($# while we need at least 2)"
+		return
+	fi
+
+	kh_eips_string="${1}"
+	kh_eips_y_shift_up="${2}"
+
+	# Sleep a tiny bit to workaround the logic in the 'new' (K4+) eInk controllers that tries to bundle updates
+	if [ "${EIPS_SLEEP}" == "true" ] ; then
+		usleep 150000	# 150ms
+	fi
+
+	# Can we use FBInk?
+	if has_fbink ; then
+		do_fbink_print "${kh_eips_string}" ${kh_eips_y_shift_up}
+	else
+		do_eips_print "${kh_eips_string}" ${kh_eips_y_shift_up}
+	fi
+}
+
+
+## Progressbar
+# Some constants...
+_BLANKET="com.lab126.blanket"
+_OTAMODULE="${_BLANKET}.ota"
+
+# Check if blanket is running
+if pkill -0 blanket ; then
+	BLANKET_IS_UP="true"
+else
+	BLANKET_IS_UP="false"
+fi
+
+# Send progress to blanket, or print it manually otherwise
+otautils_update_progress_indicator()
+{
+	local cur_percentage="${1}"
+
+	if [ "${BLANKET_IS_UP}" == "true" ] ; then
+		lipc-send-event ${_OTAMODULE} otaSplashProgress -i ${cur_percentage}
+	else
+		# NOTE: We can actually draw a progress bar with FBInk!
+		if has_fbink ; then
+			do_fbink_bar ${cur_percentage} 2
+		else
+			do_eips_print "Progress: ${cur_percentage}/100" 2
+		fi
+	fi
+}
+
+# Check if arg is an int
+is_integer()
+{
+	# Cheap trick ;)
+	[ "${1}" -eq "${1}" ] 2>/dev/null
+	return $?
+}
+
+# The amount of steps needed to fill the progress bar
+# I'm lazy, so just count the amount of calls in the script itself ;)
+# NOTE: Yup, $0 still points to the original script that sourced us :).
+[ -z ${STEPCOUNT} ] && STEPCOUNT="$(grep -c '^[[:blank:]]*otautils_update_progressbar$' ${0} 2>/dev/null)"
+# Make sure it's sane...
+is_integer "${STEPCOUNT}" || STEPCOUNT=1
+# NOTE: If you need to for some strange reason, this can be overriden in the update script
+
+# In case we need to catch failure early...
+otautils_die()
+{
+	local error_string="${1}"
+
+	if [ "${BLANKET_IS_UP}" == "true" ] ; then
+		lipc-send-event ${_OTAMODULE} otaSplashError -s "${error_string}"
+	else
+		eips_print_bottom_centered "Error: ${error_string}" 1
+	fi
+	if [ $? -eq 0 ] ; then
+		logmsg "D" "guierror" "" "display error screen: ${error_string}"
+	else
+		logmsg "W" "guierror" "status=fail" "display error screen: ${error_string}"
+	fi
+
+	# And it is called die, after all ;)
+	sleep 5
+	exit 1
+}
+
+# Fill up our progress bar, one step at a time
+# Keep track of what we're doing...
+_CUR_STEP=0
+_CUR_PERCENTAGE=0
+otautils_update_progressbar()
+{
+	# One more step...
+	_CUR_STEP=$((_CUR_STEP + 1))
+	# Bounds checking...
+	if [ ${_CUR_STEP} -lt 0 ] ; then
+		_CUR_STEP=0
+	elif [ ${_CUR_STEP} -gt ${STEPCOUNT} ] ; then
+		_CUR_STEP=${STEPCOUNT}
+	fi
+
+	# Make that a percentage
+	local bar_percentage=$(( (${_CUR_STEP} * 100) / ${STEPCOUNT} ))
+	# We can only *fill* the bar...
+	if [ ${_CUR_PERCENTAGE} -lt ${bar_percentage} ] ; then
+		_CUR_PERCENTAGE=${bar_percentage}
+	fi
+
+	# Make sure that percentage is sane...
+	is_integer "${_CUR_PERCENTAGE}" || _CUR_PERCENTAGE=0
+	# Bounds checking...
+	if [ ${_CUR_PERCENTAGE} -gt 100 ] ; then
+		_CUR_PERCENTAGE=100
+	elif [ ${_CUR_PERCENTAGE} -lt 0 ] ; then
+		_CUR_PERCENTAGE=0
+	fi
+
+	# Finally, refresh the bar
+	otautils_update_progress_indicator "${_CUR_PERCENTAGE}"
+	if [ $? -eq 0 ] ; then
+		logmsg "D" "guiprogress" "progress=${_CUR_PERCENTAGE}" "update progress indicator"
+	else
+		logmsg "W" "guiprogress" "progress=${_CUR_PERCENTAGE},status=fail" "update progress indicator"
+	fi
+}
+
+# This may come in handy for bridge related packages...
+make_mutable() {
+	local my_path="${1}"
+	# NOTE: Can't do that on symlinks, hence the hoop-jumping...
+	if [ -d "${my_path}" ] ; then
+		find "${my_path}" -type d -exec chattr -i '{}' \;
+		find "${my_path}" -type f -exec chattr -i '{}' \;
+	elif [ -f "${my_path}" ] ; then
+		chattr -i "${my_path}"
+	fi
+}
+
+make_immutable() {
+	local my_path="${1}"
+	if [ -d "${my_path}" ] ; then
+		find "${my_path}" -type d -exec chattr +i '{}' \;
+		find "${my_path}" -type f -exec chattr +i '{}' \;
+	elif [ -f "${my_path}" ] ; then
+		chattr +i "${my_path}"
+	fi
+}
+
+# That's all, folks ;)
