@@ -1,6 +1,14 @@
 #!/usr/bin/zsh
 # If you aren't using zsh what are you doing with your life?
 
+###
+# Check admin
+##
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
 export KT_WITH_UNKNOWN_DEVCODES="1"
 
 # Fall back to the bundled KindleTool if there aren't any in PATH
@@ -47,14 +55,14 @@ echo "* Extracting and mounting official firmware"
 ${KINDLETOOL} extract ./build_cache/update_kindle_pw6.bin ./build_tmp/official_firmware
 gunzip ./build_tmp/official_firmware/*rootfs*.img.gz
 mkdir ./build_tmp/official_firmware_mnt/
-sudo mount -o loop ./build_tmp/official_firmware/*rootfs*.img ./build_tmp/official_firmware_mnt/
+mount -o loop ./build_tmp/official_firmware/*rootfs*.img ./build_tmp/official_firmware_mnt/
 
 echo "* Patching UKS SQSH"
 mkdir ./build_tmp/patched_uks
 mkdir ./build_tmp/mounted_sqsh
-sudo mount -o loop ./build_tmp/official_firmware_mnt/etc/uks.sqsh ./build_tmp/mounted_sqsh
+mount -o loop ./build_tmp/official_firmware_mnt/etc/uks.sqsh ./build_tmp/mounted_sqsh
 cp ./build_tmp/mounted_sqsh/* ./build_tmp/patched_uks/
-sudo umount ./build_tmp/mounted_sqsh
+umount ./build_tmp/mounted_sqsh
 cat > "./build_tmp/patched_uks/pubdevkey01.pem" << EOF
 -----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJn1jWU+xxVv/eRKfCPR9e47lP
