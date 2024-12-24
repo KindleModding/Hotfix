@@ -19,7 +19,7 @@ MKK_BACKUP_STORAGE="/mnt/us/mkk"
 RP_BACKUP_STORAGE="/mnt/us/rp"
 ARCH="armel"
 
-# Check if the Kindle is ARMHF or ARMLF
+# Check if the Kindle is ARMHF or ARMEL
 if ls /lib | grep ld-linux-armhf.so; then
     ARCH="armhf"
 fi
