@@ -24,6 +24,8 @@ if ls /lib | grep ld-linux-armhf.so; then
     ARCH="armhf"
 fi
 
+logmsg "I" "arch_check" "" "Detected architecture - $ARCH"
+
 ## Here we go :)
 otautils_update_progressbar
 
@@ -34,6 +36,7 @@ rm -rf "/var/local/system/fixup"
 cp -f $ARCH/bridge "/var/local/system/fixup"
 chown root:root "/var/local/system/fixup"
 chmod a+rx "/var/local/system/fixup"
+echo "sh /var/local/system/fixup" > /mnt/us/documents/run_bridge.sh
 
 otautils_update_progressbar
 
@@ -88,7 +91,7 @@ cp -f json_simple-1.1.jar "${MKK_PERSISTENT_STORAGE}/json_simple-1.1.jar"
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Storing gandalf"
-cp -f gandalf "${MKK_PERSISTENT_STORAGE}/gandalf"
+cp -f $ARCH/gandalf "${MKK_PERSISTENT_STORAGE}/gandalf"
 
 otautils_update_progressbar
 
