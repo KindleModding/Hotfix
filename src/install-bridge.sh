@@ -33,10 +33,10 @@ otautils_update_progressbar
 logmsg "I" "install" "" "Installing the bridge"
 mkdir -p "/var/local/system"
 rm -rf "/var/local/system/fixup"
-cp -f $ARCH/bridge "/var/local/system/fixup"
+cp -f bridge "/var/local/system/fixup"
 chown root:root "/var/local/system/fixup"
 chmod a+rx "/var/local/system/fixup"
-echo "sh /var/local/system/fixup" > /mnt/us/documents/run_bridge.sh
+echo "#!/bin/sh\n# Name: Run Hotfix\n# Author: HackerDude\n# Icon:\nsh /var/local/system/fixup\nreboot" > /mnt/us/documents/run_bridge.sh
 
 otautils_update_progressbar
 
