@@ -40,6 +40,7 @@ echo '#!/bin/sh' > /mnt/us/documents/run_bridge.sh
 echo '# Name: Run Hotfix' >> /mnt/us/documents/run_bridge.sh
 echo '# Author: NiLuJe' >> /mnt/us/documents/run_bridge.sh
 echo '# Icon:' >> /mnt/us/documents/run_bridge.sh
+echo '# DontUseFBInk' >> /mnt/us/documents/run_bridge.sh
 echo 'sh /var/local/system/fixup' >> /mnt/us/documents/run_bridge.sh
 echo 'reboot' >> /mnt/us/documents/run_bridge.sh
 
