@@ -37,6 +37,10 @@ jobs:
     steps:
     - name: Setup
       run: sudo apt-get install meson
+    - name: Download toolchain
+      run: |
+          wget -q https://github.com/koreader/koxtoolchain/releases/latest/download/kindlepw2.tar.gz -O - | tar -xzf - -C ~
+          wget -q https://github.com/koreader/koxtoolchain/releases/latest/download/kindlehf.tar.gz -O - | tar -xzf - -C ~
     - uses: actions/checkout@v4
       with:
         submodules: recursive
@@ -46,10 +50,12 @@ jobs:
       with:
         name: kindletool
         path: ./utils/
-    - name: Download toolchain
-      run: |
-          wget -q https://github.com/koreader/koxtoolchain/releases/latest/download/kindlepw2.tar.gz -O - | tar -xzf - -C ~
-          wget -q https://github.com/koreader/koxtoolchain/releases/latest/download/kindlehf.tar.gz -O - | tar -xzf - -C ~
+    - name: Cache Kindle firmware
+      id: build-cache
+      uses: actions/cache@v4
+      with:
+        path: ./build_cache
+        key: ${{ runner.os }}-build-cache
     - name: build
       run: |
           chmod 755 ./utils/kindletool
