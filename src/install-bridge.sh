@@ -36,7 +36,12 @@ rm -rf "/var/local/system/fixup"
 cp -f bridge "/var/local/system/fixup"
 chown root:root "/var/local/system/fixup"
 chmod a+rx "/var/local/system/fixup"
-echo "#!/bin/sh\n# Name: Run Hotfix\n# Author: HackerDude\n# Icon:\nsh /var/local/system/fixup\nreboot" > /mnt/us/documents/run_bridge.sh
+echo '#!/bin/sh' > /mnt/us/documents/run_bridge.sh
+echo '# Name: Run Hotfix' >> /mnt/us/documents/run_bridge.sh
+echo '# Author: HackerDude' >> /mnt/us/documents/run_bridge.sh
+echo '# Icon:' >> /mnt/us/documents/run_bridge.sh
+echo 'sh /var/local/system/fixup' >> /mnt/us/documents/run_bridge.sh
+echo 'reboot' >> /mnt/us/documents/run_bridge.sh
 
 otautils_update_progressbar
 
