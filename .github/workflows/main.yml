@@ -6,32 +6,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
-  koxtoolchain:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Cache X-Tools
-      id: cache-x-tools
-      uses: actions/cache@v4
-      with:
-        path: ~/x-tools
-        key: ${{ runner.os }}-x_tools
-    - uses: actions/checkout@v4
-      if: steps.cache-x-tools.outputs.cache-hit != 'true'
-      with:
-        repository: NiLuJe/koxtoolchain
-    - name: Compile Toolcahin
-      if: steps.cache-x-tools.outputs.cache-hit != 'true'
-      run: |
-          sudo apt-get install build-essential autoconf automake bison flex gawk libtool libtool-bin libncurses-dev curl file git gperf help2man texinfo unzip wget
-          ./gen-tc.sh kindlepw2
-          ./gen-tc.sh kindlehf
-    - uses: actions/upload-artifact@v4
-      with:
-        name: koxtoolchain
-        path: ~/x-tools
-
   kindletool:
     runs-on: ubuntu-latest
 
@@ -58,7 +32,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [kindletool, koxtoolchain]
+    needs: kindletool
 
     steps:
     - uses: actions/checkout@v4
@@ -68,14 +42,10 @@ jobs:
       with:
         name: kindletool
         path: ./utils/
-    - uses: actions/download-artifact@v4
-      with:
-        name: koxtoolchain
-        path: ~/x-tools
-    - name: Fix permissions
+    - name: Download toolchain
       run: |
-          chown -R $USER: ~/x-tools/
-          chmod -R a+rx ~/x-tools/
+          wget -q https://github.com/koreader/koxtoolchain/releases/latest/download/kindlepw2.tar.gz -O - | tar -xzf - -C ~
+          wget -q https://github.com/koreader/koxtoolchain/releases/latest/download/kindlehf.tar.gz -O - | tar -xzf - -C ~
     - name: build
       run: |
           chmod 755 ./utils/kindletool
