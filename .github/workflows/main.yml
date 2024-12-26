@@ -12,11 +12,12 @@ jobs:
     steps:
     - name: Remove old Kindletool
       run: rm -f ./utils/kindletool
-    - name: Compile KindleTool
+    - name: Clone KindleTool
       uses: actions/checkout@v4
       with:
         repository: NiLuJe/KindleTool
         path: kindletool
+    - name: Compile KindleTool
       run: |
           sudo apt-get install -y zlib1g-dev libarchive-dev nettle-dev
           make
