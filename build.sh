@@ -50,13 +50,11 @@ cp ./sh_integration/builddir_armhf/launcher/sh_integration_launcher ./src/armhf/
 
 echo "* Building fbink..."
 cd FBInk
-source ../koxtoolchain/refs/x-compile.sh kindlepw2 env
-KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 make release
+make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
 cp ./Release/fbink ../src/armel/
 cp ./Release/libfbink* ../src/armel/libs/
 make clean
-source ../koxtoolchain/refs/x-compile.sh kindlehf env
-KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 make release
+make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
 cp ./Release/fbink ../src/armhf/
 cp ./Release/libfbink* ../src/armhf/libs/
 cd ..
