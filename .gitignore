@@ -2,3 +2,5 @@
 /build_cache
 /build_tmp
 /tmp_build_cache
+/src/armel/*
+/src/armhf/*

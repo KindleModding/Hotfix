@@ -4,3 +4,6 @@
 [submodule "FBInk"]
 	path = FBInk
 	url = https://github.com/NiLuJe/FBInk
+[submodule "koxtoolchain"]
+	path = koxtoolchain
+	url = https://github.com/NiLuJe/koxtoolchain
