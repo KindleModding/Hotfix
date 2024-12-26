@@ -35,6 +35,8 @@ jobs:
     needs: kindletool
 
     steps:
+    - name: Setup
+      run: sudo apt-get install meson
     - uses: actions/checkout@v4
       with:
         submodules: recursive

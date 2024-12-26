@@ -9,6 +9,9 @@
 #   exit 1
 #fi
 
+# Try sudo
+sudo echo
+
 export KT_WITH_UNKNOWN_DEVCODES="1"
 
 # Fall back to the bundled KindleTool if there aren't any in PATH
