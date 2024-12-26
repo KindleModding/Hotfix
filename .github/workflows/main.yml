@@ -19,9 +19,10 @@ jobs:
         path: kindletool
     - name: Compile KindleTool
       run: |
+          cd kindletool/
           sudo apt-get install -y zlib1g-dev libarchive-dev nettle-dev
           make
-          mv kindletool/KindleTool/Release/kindletool ./utils/kindletool
+          mv /KindleTool/Release/kindletool ./utils/kindletool
     - name: build
       run: |
           chmod 755 ./utils/kindletool
