@@ -36,6 +36,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
     - name: Remove old Kindletool
       run: rm -f ./utils/kindletool
     - uses: actions/download-artifact@v4
