@@ -27,16 +27,16 @@ logmsg "I" "install" "" "Installing sh_integration"
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing sh_integration_extractor"
-mkdir -p "/mnt/us/kmc/lib/"
-cp -f $ARCH/sh_integration_extractor.so "/mnt/us/kmc/lib/"
-chmod a+rx "/mnt/us/kmc/lib/sh_integration_extractor.so"
+mkdir -p "/var/local/kmc/lib/"
+cp -f $ARCH/sh_integration_extractor.so "/var/local/kmc/lib/"
+chmod a+rx "/var/local/kmc/lib/sh_integration_extractor.so"
 
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing sh_integration_launcher"
-mkdir -p "/mnt/us/kmc/bin/"
-cp -f $ARCH/sh_integration_launcher "/mnt/us/kmc/bin/"
-chmod a+rx "/mnt/us/kmc/bin/sh_integration_launcher"
+mkdir -p "/var/local/kmc/bin/"
+cp -f $ARCH/sh_integration_launcher "/var/local/kmc/bin/"
+chmod a+rx "/var/local/kmc/bin/sh_integration_launcher"
 
 otautils_update_progressbar
 
