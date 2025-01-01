@@ -13,6 +13,7 @@ HACKNAME="jb_bridge"
 
 
 # Hack specific stuff
+KMC_PERSISTENT_STORAGE="/var/local/kmc/"
 MKK_PERSISTENT_STORAGE="/var/local/mkk"
 RP_PERSISTENT_STORAGE="/var/local/rp"
 MKK_BACKUP_STORAGE="/mnt/us/mkk"
@@ -163,6 +164,32 @@ for my_file in "${RP_PERSISTENT_STORAGE}"/* ; do
 		cp -f "${my_file}" "${RP_BACKUP_STORAGE}/"
 	fi
 done
+
+make_mutable "${KMC_PERSISTENT_STORAGE}"
+rm -rf "${KMC_PERSISTENT_STORAGE}"
+mkdir -p "${KMC_PERSISTENT_STORAGE}"
+chown root:root "${KMC_PERSISTENT_STORAGE}"
+chmod g-s "${KMC_PERSISTENT_STORAGE}"
+logmsg "I" "install" "" "Installing sh_integration"
+
+otautils_update_progressbar
+
+logmsg "I" "install" "" "Installing sh_integration_extractor"
+cp -f $ARCH/sh_integration_extractor.so "${KMC_PERSISTENT_STORAGE}"
+chmod a+rx "${KMC_PERSISTENT_STORAGE}/sh_integration_extractor.so"
+
+otautils_update_progressbar
+
+logmsg "I" "install" "" "Installing sh_integration_launcher"
+cp -f $ARCH/sh_integration_launcher "${KMC_PERSISTENT_STORAGE}"
+chmod a+rx "${KMC_PERSISTENT_STORAGE}/sh_integration_launcher"
+
+otautils_update_progressbar
+
+logmsg "I" "install" "" "Adding sh_integration into appreg"
+logmsg "I" "install" "" "Modifying appreg.db"
+sqlite3 /var/local/appreg.db ".read ./appreg_register_sh_integration.sql"
+make_immutable "${KMC_PERSISTENT_STORAGE}"
 
 otautils_update_progressbar
 
