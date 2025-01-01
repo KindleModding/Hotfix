@@ -6,7 +6,12 @@ HACKNAME="jb_sh_integration"
 
 # Hack specific stuff
 KMC_PERSISTENT_STORAGE="/var/local/kmc"
-
+logmsg "I" "install" "" "Creating MKK persistent storage directory"
+make_mutable "${KMC_PERSISTENT_STORAGE}"
+rm -rf "${KMC_PERSISTENT_STORAGE}"
+mkdir -p "${KMC_PERSISTENT_STORAGE}"
+chown root:root "${KMC_PERSISTENT_STORAGE}"
+chmod g-s "${KMC_PERSISTENT_STORAGE}"
 
 ## Here we go :)
 otautils_update_progressbar
