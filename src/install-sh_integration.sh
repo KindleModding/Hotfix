@@ -5,7 +5,7 @@ HACKNAME="jb_sh_integration"
 
 
 # Hack specific stuff
-KMC_PERSISTENT_STORAGE="/var/local/kmc"
+KMC_PERSISTENT_STORAGE="/var/local/kmc/"
 logmsg "I" "install" "" "Creating KMC persistent storage directory"
 make_mutable "${KMC_PERSISTENT_STORAGE}"
 rm -rf "${KMC_PERSISTENT_STORAGE}"
@@ -32,22 +32,20 @@ logmsg "I" "install" "" "Installing sh_integration"
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing sh_integration_extractor"
-cp -f $ARCH/sh_integration_extractor.so "/var/local/kmc/"
-chmod a+rx "/var/local/kmc/sh_integration_extractor.so"
+cp -f $ARCH/sh_integration_extractor.so "${KMC_PERSISTENT_STORAGE}"
+chmod a+rx "${KMC_PERSISTENT_STORAGE}sh_integration_extractor.so"
 
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing sh_integration_launcher"
-cp -f $ARCH/sh_integration_launcher "/var/local/kmc/"
-chmod a+rx "/var/local/kmc/sh_integration_launcher"
+cp -f $ARCH/sh_integration_launcher "${KMC_PERSISTENT_STORAGE}"
+chmod a+rx "${KMC_PERSISTENT_STORAGE}sh_integration_launcher"
 
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Adding sh_integration into appreg"
 logmsg "I" "install" "" "Modifying appreg.db"
-sqlite3 /var/local/appreg.db ".read ./appreg_register_sh_integration.sql" &> /mnt/us/appreg.log
-
-cp /var/local/appreg.db /mnt/us/appreg.db
+sqlite3 /var/local/appreg.db ".read ./appreg_register_sh_integration.sql"
 
 make_immutable "${KMC_PERSISTENT_STORAGE}"
 
