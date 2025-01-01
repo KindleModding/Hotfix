@@ -6,7 +6,7 @@ HACKNAME="jb_sh_integration"
 
 # Hack specific stuff
 KMC_PERSISTENT_STORAGE="/var/local/kmc"
-logmsg "I" "install" "" "Creating MKK persistent storage directory"
+logmsg "I" "install" "" "Creating KMC persistent storage directory"
 make_mutable "${KMC_PERSISTENT_STORAGE}"
 rm -rf "${KMC_PERSISTENT_STORAGE}"
 mkdir -p "${KMC_PERSISTENT_STORAGE}"
@@ -32,27 +32,24 @@ logmsg "I" "install" "" "Installing sh_integration"
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing sh_integration_extractor"
-mkdir -p "/var/local/kmc/lib/"
-cp -f $ARCH/sh_integration_extractor.so "/var/local/kmc/lib/"
-chmod a+rx "/var/local/kmc/lib/sh_integration_extractor.so"
+cp -f $ARCH/sh_integration_extractor.so "/var/local/kmc/"
+chmod a+rx "/var/local/kmc/sh_integration_extractor.so"
 
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing sh_integration_launcher"
-mkdir -p "/var/local/kmc/bin/"
-cp -f $ARCH/sh_integration_launcher "/var/local/kmc/bin/"
-chmod a+rx "/var/local/kmc/bin/sh_integration_launcher"
+cp -f $ARCH/sh_integration_launcher "/var/local/kmc/"
+chmod a+rx "/var/local/kmc/sh_integration_launcher"
 
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Adding sh_integration into appreg"
-if [ $(sqlite3 /var/local/appreg.db "SELECT COUNT(handlerId) FROM handlerIDs WHERE handlerId='com.notmarek.shell_integration.launcher';") == 0 ]
-then
-    logmsg "I" "install" "" "Modifying appreg.db"
-    sqlite3 /var/local/appreg.db ".read ./appreg_register_sh_integration.sql" &> /mnt/us/appreg.log
-fi
+logmsg "I" "install" "" "Modifying appreg.db"
+sqlite3 /var/local/appreg.db ".read ./appreg_register_sh_integration.sql" &> /mnt/us/appreg.log
 
 cp /var/local/appreg.db /mnt/us/appreg.db
+
+make_immutable "${KMC_PERSISTENT_STORAGE}"
 
 otautils_update_progressbar
 
