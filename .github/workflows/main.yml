@@ -10,16 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v4
+      if: steps.cache-kindletool.outputs.cache-hit != 'true'
+      with:
+        repository: KindleModding/KindleTool
     - name: Cache Kindletool
       id: cache-kindletool
       uses: actions/cache@v4
       with:
         path: KindleTool
-        key: ${{ runner.os }}-kindletool
-    - uses: actions/checkout@v4
-      if: steps.cache-kindletool.outputs.cache-hit != 'true'
-      with:
-        repository: NiLuJe/KindleTool
+        key: ${{ runner.os }}-kindletool-${{ hashFiles('**') }}
     - name: Compile KindleTool
       if: steps.cache-kindletool.outputs.cache-hit != 'true'
       run: |
