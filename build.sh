@@ -26,8 +26,8 @@ mkdir ./build ./build_tmp ./build_cache
 # Build native stuff
 ###
 echo "* Building natives"
-mkdir -p ./src/armel/libs/
-mkdir -p ./src/armhf/libs/
+mkdir -p ./src/kmc/armel/libs/
+mkdir -p ./src/kmc/armhf/libs/
 
 echo "* Building sh_integration..."
 cd sh_integration
@@ -41,22 +41,22 @@ cd builddir_armhf
 meson compile
 cd ../../
 echo "* Copying sh_integration"
-cp ./sh_integration/builddir_armel/extractor/sh_integration_extractor.so ./src/armel/
-cp ./sh_integration/builddir_armel/launcher/sh_integration_launcher ./src/armel/
-cp ./sh_integration/builddir_armhf/extractor/sh_integration_extractor.so ./src/armhf/
-cp ./sh_integration/builddir_armhf/launcher/sh_integration_launcher ./src/armhf/
+cp ./sh_integration/builddir_armel/extractor/sh_integration_extractor.so ./src/kmc/armel/
+cp ./sh_integration/builddir_armel/launcher/sh_integration_launcher ./src/kmc/armel/
+cp ./sh_integration/builddir_armhf/extractor/sh_integration_extractor.so ./src/kmc/armhf/
+cp ./sh_integration/builddir_armhf/launcher/sh_integration_launcher ./src/kmc/armhf/
 
 echo "* Building fbink..."
 cd FBInk
 make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
 make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
-cp ./Release/fbink ../src/armel/
-cp ./Release/libfbink* ../src/armel/libs/
+cp ./Release/fbink ../src/kmc/armel/
+cp ./Release/libfbink* ../src/kmc/armel/libs/
 make clean
 make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
 make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
-cp ./Release/fbink ../src/armhf/
-cp ./Release/libfbink* ../src/armhf/libs/
+cp ./Release/fbink ../src/kmc/armhf/
+cp ./Release/libfbink* ../src/kmc/armhf/libs/
 cd ..
 
 ###
@@ -110,7 +110,7 @@ eEgloIdm1E4LOsyrz4kttQtGRlzCErmBGt6+cAVEV86y2phOJ3mLk0Ek9UQXbIUf
 rvyJnS2MKLG2cczjlQIDAQAB
 -----END PUBLIC KEY-----
 EOF
-mksquashfs ./build_tmp/patched_uks ./build_tmp/src/updater_keys.sqsh
+mksquashfs ./build_tmp/patched_uks ./build_tmp/src/mkk/updater_keys.sqsh
 
 echo "* Generating device list"
 DEVICE_LIST="$(${KINDLETOOL} convert -i tmp_build_cache/update_kindle*.bin 2>&1 | grep -o "^Device .*" | grep -o "0x[[:xdigit:]]*" | tr "\n" " ")"
