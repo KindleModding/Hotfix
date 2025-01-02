@@ -63,6 +63,8 @@ if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "512" ] ; then
     rm -f gandalf
     rm -f bridge.conf
     rm -f fbink
+    rm -rf armel
+    rm -rf armhf
     return 1
 fi
 
@@ -178,6 +180,8 @@ rm -f json_simple-1.1.jar
 rm -f gandalf
 rm -f bridge.conf
 rm -f fbink
+rm -rf armel
+rm -rf armhf
 logmsg "I" "install" "" "done"
 
 otautils_update_progressbar
