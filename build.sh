@@ -101,6 +101,7 @@ mkdir ./build_tmp/mounted_sqsh
 sudo mount -o loop ./build_tmp/official_firmware_mnt/etc/uks.sqsh ./build_tmp/mounted_sqsh
 cp ./build_tmp/mounted_sqsh/* ./build_tmp/patched_uks/
 sudo umount ./build_tmp/mounted_sqsh
+sudo umount ./build_tmp/official_firmware_mnt/
 cat > "./build_tmp/patched_uks/pubdevkey01.pem" << EOF
 -----BEGIN PUBLIC KEY-----
 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJn1jWU+xxVv/eRKfCPR9e47lP
