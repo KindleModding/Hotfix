@@ -25,6 +25,9 @@ IS_KOA3="false"
 IS_PW5="false"
 IS_KT5="false"
 IS_KS="false"
+IS_PW6="false"
+IS_KT6="false"
+IS_CS="false"
 K5_ATLEAST_54="false"
 K5_ATLEAST_512="false"
 MKK_PERSISTENT_STORAGE="/var/local/mkk"
@@ -96,8 +99,8 @@ find_rootfs()
 	elif [ "${IS_PW4}" == "true" ] || [ "${IS_KT4}" == "true" ] ; then
 		# NOTE: At least this time, rdev agrees with kdb...
 		ROOTPART="mmcblk1p8"
-	elif [ "${IS_PW5}" == "true" ] || [ "${IS_KT5}" == "true" ] || [ "${IS_KS}" == "true" ] ; then
-		# NOTE: On Bellatrix & Bellatrix3, kdb & platform_variables also agree...
+	elif [ "${IS_PW5}" == "true" ] || [ "${IS_KT5}" == "true" ] || [ "${IS_KS}" == "true" ] || [ "${IS_PW6}" == "true" ] || [ "${IS_KT6}" == "true" ] || [ "${IS_CS}" == "true" ] ; then
+		# NOTE: On Bellatrix & Bellatrix3 & Bellatrix4, kdb & platform_variables also agree...
 		ROOTPART="mmcblk0p8"
 	fi
 
@@ -206,6 +209,18 @@ check_model()
 				# KS...
 				IS_KS="true"
 			;;
+			"349" | "346" | "33X" | "33W" | "3HA" | "3H5" | "3H3" | "3H8" | "3J5" | "3JS" )
+				# PW6
+				IS_PW6="true"
+			;;
+			"3L5" | "3L6" | "3L4" | "3L3" | "A89" | "3L2" | "3KM" )
+				# KT6
+				IS_KT6="true"
+			;;
+			"3H7" )
+				# CS
+				IS_CS="true"
+			;;
 			* )
 				# Fallback... We shouldn't ever hit that.
 				IS_TOUCH="true"
@@ -234,12 +249,12 @@ check_model()
 		SCREEN_Y_RES=1680
 		EIPS_X_RES=16
 		EIPS_Y_RES=24
-	elif [ "${IS_PW5}" == "true" ] ; then
+	elif [ "${IS_PW5}" == "true" ] || [ "${IS_PW6}" == "true" ] ; then
 		SCREEN_X_RES=1236
 		SCREEN_Y_RES=1648
 		EIPS_X_RES=16
 		EIPS_Y_RES=24
-	elif [ "${IS_KT5}" == "true" ] ; then
+	elif [ "${IS_KT5}" == "true" || [ "${IS_KT6}" == "true" ] ] ; then
 		SCREEN_X_RES=1072
 		SCREEN_Y_RES=1448
 		EIPS_X_RES=16
@@ -319,6 +334,21 @@ check_version()
 			K5_ATLEAST_512="true"
 		elif [ "${IS_KS}" == "true" ] ; then
 			# The KS shipped on >= 5.16.y ;)
+			logmsg "I" "check_version" "" "KS detected, assuming >= 5.4"
+			K5_ATLEAST_54="true"
+			K5_ATLEAST_512="true"
+		elif [ "${IS_PW6}" == "true" ] ; then
+			# The PW6 shipped on >= 5.17.y ;)
+			logmsg "I" "check_version" "" "KS detected, assuming >= 5.4"
+			K5_ATLEAST_54="true"
+			K5_ATLEAST_512="true"
+		elif [ "${IS_KT6}" == "true" ] ; then
+			# The KT6 shipped on >= 5.17.y ;)
+			logmsg "I" "check_version" "" "KS detected, assuming >= 5.4"
+			K5_ATLEAST_54="true"
+			K5_ATLEAST_512="true"
+		elif [ "${IS_CS}" == "true" ] ; then
+			# The CS shipped on >= 5.18.y ;)
 			logmsg "I" "check_version" "" "KS detected, assuming >= 5.4"
 			K5_ATLEAST_54="true"
 			K5_ATLEAST_512="true"
@@ -759,6 +789,18 @@ install_log_kpp()
 	print_log_kpp_feedback
 }
 
+install_log_kpp_app()
+{
+	mount_root_rw
+	logmsg "I" "install_log_kpp" "" "Patching in the dispatch command for kpp"
+	# KPP (React, new UI)
+	sed -e '/^{/a\' -e '    ";log" : "/usr/bin/logThis.sh",' -i "${ROOT}/app/kpp_app_cmds.json"
+	mount_ro
+
+	# Show some feedback
+	print_log_kpp_feedback
+}
+
 install_bridge_job()
 {
 	mount_root_rw
@@ -913,6 +955,13 @@ fi
 if [ -f "${ROOT}/usr/share/app/kpp_sys_cmds.json" ] ; then
 	if ! grep -q "logThis.sh" "${ROOT}/usr/share/app/kpp_sys_cmds.json" ; then
 		install_log_kpp
+	fi
+fi
+
+# Check if we need to do something about the dispatch command (for the new React UI, just to be safe - hackerdude)
+if [ -f "${ROOT}/app/kpp_app_cmds.json" ] ; then
+	if ! grep -q "logThis.sh" "${ROOT}/app/kpp_app_cmds.json" ; then
+		install_log_kpp_app
 	fi
 fi
 
