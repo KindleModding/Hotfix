@@ -1,5 +1,4 @@
-#!/usr/bin/zsh
-# If you aren't using zsh what are you doing with your life?
+#!/bin/sh
 
 ###
 # Check admin
@@ -15,8 +14,7 @@ sudo echo
 export KT_WITH_UNKNOWN_DEVCODES="1"
 
 # Fall back to the bundled KindleTool if there aren't any in PATH
-KINDLETOOL="$(command -v kindletool)"
-KINDLETOOL="${KINDLETOOL:-${PWD}/utils/kindletool}"
+KINDLETOOL="${PWD}/utils/kindletool"
 
 ###
 # Cleanup previous build
