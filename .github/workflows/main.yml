@@ -19,7 +19,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: KindleTool
-        key: ${{ runner.os }}-kindletool-${{ hashFiles('**') }}
+        key: ${{ runner.os }}-kindletool-${{ hashFiles('KindleTool/**') }}
     - name: Compile KindleTool
       if: steps.cache-kindletool.outputs.cache-hit != 'true'
       run: |
