@@ -18,13 +18,11 @@ INSERT INTO properties (handlerId, name, value) VALUES ('com.notmarek.shell_inte
 INSERT INTO properties (handlerId, name, value) VALUES ('com.notmarek.shell_integration.launcher', 'maxUnloadTime', '60');
 INSERT INTO properties (handlerId, name, value) VALUES ('com.notmarek.shell_integration.launcher', 'maxLoadTime', '60');
 INSERT INTO properties (handlerId, name, value) VALUES ('com.notmarek.shell_integration.launcher', 'command', '/var/local/kmc/bin/sh_integration_launcher');
-
-INSERT INTO associations (interface, handlerId, contentId, defaultAssoc) VALUES ('extractor', 'com.notmarek.shell_integration.extractor', 'GL:*.sh', 'true');
+INSERT INTO associations (interface, handlerId, contentId, defaultAssoc) VALUES ('application', 'com.notmarek.shell_integration.launcher', 'MT:text/x-shellscript', 'true');
 
 
 INSERT INTO handlerIds (handlerId) VALUES ('com.notmarek.shell_integration.extractor');
 INSERT INTO properties (handlerId, name, value) VALUES ('com.notmarek.shell_integration.extractor', 'lib', '/var/local/kmc/lib/sh_integration_extractor.so');
 INSERT INTO properties (handlerId, name, value) VALUES ('com.notmarek.shell_integration.extractor', 'entry', 'load_extractor');
-
-INSERT INTO associations (interface, handlerId, contentId, defaultAssoc) VALUES ('application', 'com.notmarek.shell_integration.launcher', 'MT:text/x-shellscript', 'true');
+INSERT INTO associations (interface, handlerId, contentId, defaultAssoc) VALUES ('extractor', 'com.notmarek.shell_integration.extractor', 'GL:*.sh', 'true');
 COMMIT;

@@ -5,6 +5,20 @@
 source /etc/upstart/functions
 LOG_DOMAIN="jb_hotfix"
 
+# Setup environment
+ROOTPART="$(rdev | awk '{ print $1; }')" # Hotfix is ran as a booklet, we are ALWAYS running from main
+
+KMC_PERSISTENT_STORAGE="/var/local/kmc"
+MKK_PERSISTENT_STORAGE="/var/local/mkk"
+RP_PERSISTENT_STORAGE="/var/local/rp"
+KMC_BACKUP_STORAGE="/mnt/us/kmc"
+MKK_BACKUP_STORAGE="/mnt/us/mkk"
+ARCH="armel"
+# Check if the Kindle is ARMHF or ARMEL
+if ls /lib | grep ld-linux-armhf.so; then
+    ARCH="armhf"
+fi
+
 logmsg()
 {
 	f_log "${1}" "${LOG_DOMAIN}" "${2}" "${3}" "${4}"
@@ -46,6 +60,31 @@ make_immutable() {
 		chattr +i "${my_path}"
 	fi
 }
+
+# Here we go...
+logmsg "I" "main" "" "i can fix this (r${BRIDGE_REV})"
+
+###
+# Re-link binaries to current architecture (THIS CAN CHANGE LOL)
+###
+logmsg "I" "install" "" "Linking gandalf to MKK"
+rm -f "${MKK_PERSISTENT_STORAGE}/gandalf"
+ln -sf "${KMC_PERSISTENT_STORAGE}/${ARCH}/gandalf" "${MKK_PERSISTENT_STORAGE}/gandalf"
+
+logmsg "I" "install" "" "Setting up gandalf"
+chown root:root "${MKK_PERSISTENT_STORAGE}/gandalf"
+chmod a+rx "${MKK_PERSISTENT_STORAGE}/gandalf"
+chmod +s "${MKK_PERSISTENT_STORAGE}/gandalf"
+ln -sf "${MKK_PERSISTENT_STORAGE}/gandalf" "${MKK_PERSISTENT_STORAGE}/su"
+
+# Same for fbink
+logmsg "I" "install" "" "Installing fbink"
+mkdir -p "/mnt/us/libkh/bin"
+rm -f /mnt/us/libkh/bin/fbink
+cp -f "kmc/$ARCH/fbink" "/mnt/us/libkh/bin/fbink"
+chmod a+rx "/mnt/us/libkh/bin/fbink"
+###
+
 
 # Install the dispatch
 logmsg "I" "install" "" "Installing the dispatch"

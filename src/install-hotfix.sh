@@ -94,6 +94,7 @@ chmod 0664 "${KMC_PERSISTENT_STORAGE}/kmc.conf"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/armel/*"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/armhf/*"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix.sh"
+chmod a+rx "${KMC_PERSISTENT_STORAGE}/run_hotfix.sh"
 
 # Fix Gandalf permissions
 chown root:root "${KMC_PERSISTENT_STORAGE}/armel/gandalf"
@@ -133,8 +134,11 @@ make_immutable "/etc/upstart/kmc.conf"
 # Setup gandalf and fbink
 ###
 otautils_update_progressbar
-logmsg "I" "install" "" "Linking gandalf to MKK"
+logmsg "I" "install" "" "Linking gandalf to mkk"
 ln -sf "${KMC_PERSISTENT_STORAGE}/${ARCH}/gandalf" "${MKK_PERSISTENT_STORAGE}/gandalf"
+logmsg "I" "install" "" "Linking arch-specific gandalf versions within kmc"
+ln -sf "${KMC_PERSISTENT_STORAGE}/armhf/gandalf" "${KMC_PERSISTENT_STORAGE}/armhf/su"
+ln -sf "${KMC_PERSISTENT_STORAGE}/armel/gandalf" "${KMC_PERSISTENT_STORAGE}/armel/su"
 
 otautils_update_progressbar
 logmsg "I" "install" "" "Setting up gandalf"
@@ -152,13 +156,16 @@ chmod a+rx "/mnt/us/libkh/bin/fbink"
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing the hotfix booklet"
-echo '#!/bin/sh' > /mnt/us/documents/run_bridge.sh
-echo '# Name: Run Hotfix' >> /mnt/us/documents/run_bridge.sh
-echo '# Author: HackerDude' >> /mnt/us/documents/run_bridge.sh
-echo '# Icon:' >> /mnt/us/documents/run_bridge.sh
-echo '# DontUseFBInk' >> /mnt/us/documents/run_bridge.sh
-echo "sh ${KMC_PERSISTENT_STORAGE}/hotfix.sh" >> /mnt/us/documents/run_bridge.sh
-echo 'reboot' >> /mnt/us/documents/run_bridge.sh
+#echo '#!/bin/sh' > /mnt/us/documents/run_bridge.sh
+#echo '# Name: Run Hotfix' >> /mnt/us/documents/run_bridge.sh
+#echo '# Author: HackerDude' >> /mnt/us/documents/run_bridge.sh
+#echo '# Icon:' >> /mnt/us/documents/run_bridge.sh
+#echo '# DontUseFBInk' >> /mnt/us/documents/run_bridge.sh
+#echo "sh ${KMC_PERSISTENT_STORAGE}/hotfix.sh" >> /mnt/us/documents/run_bridge.sh
+#echo 'reboot' >> /mnt/us/documents/run_bridge.sh
+
+rm -f /mnt/us/documents/run_bridge.sh # Remove old runner
+echo 'Running hotfix' > /mnt/us/documents/run_hotfix.run_hotfix
 
 logmsg "I" "install" "" "Installing sh_integration"
 ln -sf "${KMC_PERSISTENT_STORAGE}/${ARCH}/sh_integration_extractor.so" "${KMC_PERSISTENT_STORAGE}/lib/sh_integration_extractor.so"
@@ -170,6 +177,7 @@ chmod a+rx "${KMC_PERSISTENT_STORAGE}/bin/sh_integration_launcher"
 
 logmsg "I" "install" "" "Modifying appreg.db"
 sqlite3 /var/local/appreg.db ".read ./kmc/appreg_register_sh_integration.sql"
+sqlite3 /var/local/appreg.db ".read ./kmc/appreg_register_hotfix_runner.sql"
 
 cleanup()
 logmsg "I" "install" "" "done"
