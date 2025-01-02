@@ -621,7 +621,7 @@ install_touch_update_key_squash()
 	cp -f "${MKK_PERSISTENT_STORAGE}/updater_keys.sqsh" "${ROOT}/etc/uks.sqsh"
 	chown root:root "/etc/uks.sqsh"
     chmod 744 "/etc/uks.sqsh"
-    mount "/etc/uks.sqsh" "/etc/uks" -o loop,norelatime,nodiratime,noatime -t squashfs
+    #mount "/etc/uks.sqsh" "/etc/uks" -o loop,norelatime,nodiratime,noatime -t squashfs
     make_immutable "/etc/uks.sqsh"
 	mount_ro
 
