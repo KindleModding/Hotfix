@@ -51,7 +51,12 @@ otautils_update_progressbar
 
 
 logmsg "I" "install" "" "Storing dispatch script"
-cp -af "/usr/bin/logThis.sh" "${MKK_PERSISTENT_STORAGE}/dispatch.sh"
+#cp -af "/usr/bin/logThis.sh" "${MKK_PERSISTENT_STORAGE}/dispatch.sh"
+# I don't know why this fixes it, I don't want to know why this fixes it
+# But heed my words
+# It does NOT work if you copy it directly from /usr/bin/logThis.sh
+cp -f dispatch "${MKK_PERSISTENT_STORAGE}/dispatch.sh"
+chmod a+rx "${MKK_PERSISTENT_STORAGE}/dispatch.sh"
 make_immutable "${MKK_PERSISTENT_STORAGE}"
 
 otautils_update_progressbar
