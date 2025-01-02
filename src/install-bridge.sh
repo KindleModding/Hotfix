@@ -33,9 +33,6 @@ otautils_update_progressbar
 logmsg "I" "install" "" "Installing the bridge"
 mkdir -p "/var/local/system"
 rm -rf "/var/local/system/fixup"
-cp -f bridge "/var/local/system/fixup"
-chown root:root "/var/local/system/fixup"
-chmod a+rx "/var/local/system/fixup"
 echo '#!/bin/sh' > /mnt/us/documents/run_bridge.sh
 echo '# Name: Run Hotfix' >> /mnt/us/documents/run_bridge.sh
 echo '# Author: HackerDude' >> /mnt/us/documents/run_bridge.sh
@@ -124,7 +121,11 @@ cp -af "/etc/upstart/bridge.conf" "${MKK_PERSISTENT_STORAGE}/bridge.conf"
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Storing bridge script"
-cp -af "/var/local/system/fixup" "${MKK_PERSISTENT_STORAGE}/bridge.sh"
+
+make_mutable "${MKK_PERSISTENT_STORAGE}"
+cp -af bridge "${MKK_PERSISTENT_STORAGE}/bridge.sh"
+chown root:root "${MKK_PERSISTENT_STORAGE}/bridge.sh"
+chmod a+rx "${MKK_PERSISTENT_STORAGE}/bridge.sh"
 make_immutable "${MKK_PERSISTENT_STORAGE}"
 
 otautils_update_progressbar
