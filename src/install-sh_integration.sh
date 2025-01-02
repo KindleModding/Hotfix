@@ -10,7 +10,7 @@ logmsg "I" "install" "" "Creating KMC persistent storage directory"
 make_mutable "${KMC_PERSISTENT_STORAGE}"
 rm -rf "${KMC_PERSISTENT_STORAGE}"
 mkdir -p "${KMC_PERSISTENT_STORAGE}"
-chown root:root "${KMC_PERSISTENT_STORAGE}"
+chown framework: "${KMC_PERSISTENT_STORAGE}" # Framework needs to do stuff to this
 chmod g-s "${KMC_PERSISTENT_STORAGE}"
 
 ## Here we go :)
@@ -46,8 +46,6 @@ otautils_update_progressbar
 logmsg "I" "install" "" "Adding sh_integration into appreg"
 logmsg "I" "install" "" "Modifying appreg.db"
 sqlite3 /var/local/appreg.db ".read ./appreg_register_sh_integration.sql"
-
-make_immutable "${KMC_PERSISTENT_STORAGE}"
 
 otautils_update_progressbar
 
