@@ -47,6 +47,10 @@ logmsg "I" "install" "" "Adding sh_integration into appreg"
 logmsg "I" "install" "" "Modifying appreg.db"
 sqlite3 /var/local/appreg.db ".read ./appreg_register_sh_integration.sql"
 
+rm -f appreg_register_sh_integration.sql
+rm -rf armel
+rm -rf armhf
+
 otautils_update_progressbar
 
 return 0
