@@ -14,7 +14,6 @@ cleanup()
 # Hack specific 
 KMC_PERSISTENT_STORAGE="/var/local/kmc"
 MKK_PERSISTENT_STORAGE="/var/local/mkk"
-RP_PERSISTENT_STORAGE="/var/local/rp"
 KMC_BACKUP_STORAGE="/mnt/us/kmc"
 MKK_BACKUP_STORAGE="/mnt/us/mkk"
 RP_BACKUP_STORAGE="/mnt/us/rp"
@@ -66,13 +65,6 @@ mkdir -p "${MKK_PERSISTENT_STORAGE}"
 chown root:root "${MKK_PERSISTENT_STORAGE}"
 chmod g-s "${MKK_PERSISTENT_STORAGE}"
 
-otautils_update_progressbar
-make_mutable "${RP_PERSISTENT_STORAGE}"
-rm -rf "${RP_PERSISTENT_STORAGE}"
-mkdir -p "${RP_PERSISTENT_STORAGE}"
-chown root:root "${RP_PERSISTENT_STORAGE}"
-chmod g-s "${RP_PERSISTENT_STORAGE}"
-
 
 ###
 # Copy data from package to persistent storage
@@ -104,20 +96,6 @@ chown root:root "${KMC_PERSISTENT_STORAGE}/armhf/gandalf"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/armhf/gandalf"
 chmod +s "${KMC_PERSISTENT_STORAGE}/armhf/gandalf"
 
-###
-# Setup persistent RP
-###
-logmsg "I" "install" "" "Setting up persistent RP"
-for my_job in debrick cowardsdebrick ; do
-    if [ -f "/etc/upstart/${my_job}.conf" ] ; then
-        cp -af "/etc/upstart/${my_job}.conf" "${RP_PERSISTENT_STORAGE}/${my_job}.conf"
-    fi
-    if [ -f "/etc/upstart/${my_job}" ] ; then
-        cp -af "/etc/upstart/${my_job}" "${RP_PERSISTENT_STORAGE}/${my_job}"
-    fi
-done
-make_immutable "${RP_PERSISTENT_STORAGE}"
-
 
 ###
 # Install KMC upstart job
@@ -125,6 +103,7 @@ make_immutable "${RP_PERSISTENT_STORAGE}"
 otautils_update_progressbar
 logmsg "I" "install" "" "Installing kmc upstart job"
 make_mutable "/etc/upstart/kmc.conf"
+rm -rf "/etc/upstart/bridge.conf" # Delete OLD bridge upstart job (our KMC job is much nicer)
 rm -rf "/etc/upstart/kmc.conf"
 cp -f kmc/kmc.conf "/etc/upstart/kmc.conf"
 chmod 0664 "/etc/upstart/kmc.conf"
