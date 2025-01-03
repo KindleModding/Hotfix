@@ -32,7 +32,10 @@ otautils_update_progressbar
 # Install the bridge
 logmsg "I" "install" "" "Installing the bridge"
 mkdir -p "/var/local/system"
+make_mutable "/var/local/system/fixup"
 rm -rf "/var/local/system/fixup"
+make_mutable "/var/local/system/onetimefixup"
+rm -rf "/var/local/system/onetimefixup"
 echo '#!/bin/sh' > /mnt/us/documents/run_bridge.sh
 echo '# Name: Run Hotfix' >> /mnt/us/documents/run_bridge.sh
 echo '# Author: HackerDude' >> /mnt/us/documents/run_bridge.sh
