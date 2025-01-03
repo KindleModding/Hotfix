@@ -5,24 +5,10 @@ source ./libotautils6
 
 cleanup()
 {
-    rm -rf kmc/
-    rm -rf mkk/
+    rm -f kmc.tar
+    rm -f mkk.tar
     rm -f libotautils6
 }
-
-# Useful vars
-HOTFIX_VERSION="v2.0.0-Dev"
-KMC_PERSISTENT_STORAGE="/var/local/kmc"
-MKK_PERSISTENT_STORAGE="/var/local/mkk"
-KMC_BACKUP_STORAGE="/mnt/us/kmc"
-MKK_BACKUP_STORAGE="/mnt/us/mkk"
-RP_BACKUP_STORAGE="/mnt/us/rp"
-ARCH="armel"
-
-# Check if the Kindle ihotfix/s ARMHF or ARMEL
-if ls /lib | grep ld-linux-armhf.so; then
-    ARCH="armhf"
-fi
 
 HACKNAME="hotfix_installer"
 logmsg "I" "arch_check" "" "Detected architecture - $ARCH"
@@ -37,7 +23,7 @@ otautils_update_progressbar
 
 # Make sure we have enough space left (>512KB) in /var/local first...
 logmsg "I" "install" "" "checking amount of free storage space..."
-if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "512" ] ; then
+if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1)))" ] ; then
     logmsg "C" "install" "code=1" "not enough space left in varlocal"
     cleanup()
     return 1
@@ -105,7 +91,8 @@ ln -sf "${KMC_PERSISTENT_STORAGE}/${ARCH}/bin" "${KMC_PERSISTENT_STORAGE}/bin"
 otautils_update_progressbar
 logmsg "I" "install" "" "Installing kmc upstart job"
 make_mutable "/etc/upstart/kmc.conf"
-rm -rf "/etc/upstart/bridge.conf" # Delete OLD bridge upstart job (our KMC job is much nicer)
+make_mutable "/etc/upstart/bridge.conf"
+rm -rf "/etc/upstart/bridge.conf" # Delete OLD bridge upstart job (Our KMC job is much neater)
 rm -rf "/etc/upstart/kmc.conf"
 cp -f "${KMC_PERSISTENT_STORAGE}/hotfix/kmc.conf" "/etc/upstart/kmc.conf"
 chmod 0664 "/etc/upstart/kmc.conf"
@@ -145,6 +132,7 @@ sqlite3 /var/local/appreg.db ".read ${KMC_PERSISTENT_STORAGE}/hotfix/appreg_regi
 sqlite3 /var/local/appreg.db ".read ${KMC_PERSISTENT_STORAGE}/hotfix/appreg_register_hotfix_runner.sql"
 
 cleanup()
+make_immutable "${MKK_PERSISTENT_STORAGE}"
 logmsg "I" "install" "" "done"
 
 otautils_update_progressbar
