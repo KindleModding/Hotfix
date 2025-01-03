@@ -617,12 +617,12 @@ install_touch_update_key_squash()
 	mount_root_rw
 	logmsg "I" "install_touch_update_key_squash" "" "Copying the jailbreak updater keystore"
 	make_mutable "${ROOT}/etc/uks.sqsh"
-	umount "/etc/uks"
-	cp -f "${MKK_PERSISTENT_STORAGE}/updater_keys.sqsh" "${ROOT}/etc/uks.sqsh"
-	chown root:root "/etc/uks.sqsh"
-    chmod 744 "/etc/uks.sqsh"
-    #mount "/etc/uks.sqsh" "/etc/uks" -o loop,norelatime,nodiratime,noatime -t squashfs
-    make_immutable "/etc/uks.sqsh"
+	local my_loop="$(grep ' /etc/uks ' /proc/mounts | cut -f1 -d' ')"
+    umount "${my_loop}"
+    losetup -d "${my_loop}"
+    cp -f "${MKK_PERSISTENT_STORAGE}/updater_keys.sqsh" "${ROOT}/etc/uks.sqsh"
+    mount -o loop="${my_loop}",nodiratime,noatime -t squashfs "/etc/uks.sqsh" "/etc/uks"
+    #make_immutable "/etc/uks.sqsh" # Breaks 12th gen
 	mount_ro
 
 	# Show some feedback
