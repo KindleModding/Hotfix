@@ -11,7 +11,7 @@ cleanup()
 }
 
 # Useeful vars
-# Hack specific 
+HOTFIX_VERSION="v2.0.0-Dev"
 KMC_PERSISTENT_STORAGE="/var/local/kmc"
 MKK_PERSISTENT_STORAGE="/var/local/mkk"
 KMC_BACKUP_STORAGE="/mnt/us/kmc"
@@ -135,16 +135,9 @@ chmod a+rx "/mnt/us/libkh/bin/fbink"
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing the hotfix booklet"
-#echo '#!/bin/sh' > /mnt/us/documents/run_bridge.sh
-#echo '# Name: Run Hotfix' >> /mnt/us/documents/run_bridge.sh
-#echo '# Author: HackerDude' >> /mnt/us/documents/run_bridge.sh
-#echo '# Icon:' >> /mnt/us/documents/run_bridge.sh
-#echo '# DontUseFBInk' >> /mnt/us/documents/run_bridge.sh
-#echo "sh ${KMC_PERSISTENT_STORAGE}/hotfix.sh" >> /mnt/us/documents/run_bridge.sh
-#echo 'reboot' >> /mnt/us/documents/run_bridge.sh
 
 rm -f /mnt/us/documents/run_bridge.sh # Remove old runner
-echo 'Running hotfix' > /mnt/us/documents/run_hotfix.run_hotfix
+echo "${HOTFIX_VERSION}" > /mnt/us/documents/run_hotfix.run_hotfix
 
 logmsg "I" "install" "" "Installing sh_integration"
 ln -sf "${KMC_PERSISTENT_STORAGE}/${ARCH}/sh_integration_extractor.so" "${KMC_PERSISTENT_STORAGE}/lib/sh_integration_extractor.so"

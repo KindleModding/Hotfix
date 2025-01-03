@@ -7,3 +7,5 @@
 
 # We don't build gandalf ourselves at this time
 !/src/kmc/*/gandalf
+!/src/kmc/*/su
+# I know the above is a bit hacky - BUT IT WORKS

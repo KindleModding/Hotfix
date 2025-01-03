@@ -1,0 +1,281 @@
+###
+# Logging/Progressbar handling for OTA update scripts
+# Based on libotautils5 from NiLuJe
+# Written by HackerDude
+#
+# (The 5 meant K5 not version 5 didn't it...)
+# Notable Changes
+# - Use an enum for models
+# - Remove dependency on eips (being deprecated in favour for eips_v2, might as well use fbink in case it happens again)
+#
+##
+
+###
+# General helpers
+###
+model_enum()
+{
+    i=0
+    for enumItem in $@; do
+        eval "MODEL_${enumItem}=${i}"
+        i=$((i+1)) 
+    done
+}
+
+# Pull some helper functions for logging
+_FUNCTIONS=/etc/upstart/functions
+[ -f ${_FUNCTIONS} ] && source ${_FUNCTIONS}
+
+# Make sure HACKNAME is set (NOTE: This should be overriden in the update script)
+[ -z "${HACKNAME}" ] && HACKNAME="ota_script"
+
+
+# Setup an enum for Kindle models
+# ORDER matters, from oldest to newest
+model_enum K5 PW PW2 KV KT2 PW3 KOA KT3 KOA2 PW4 KOA3 PW5 KT5 KS PW6 KT6 CS
+
+# Do the S/N dance...
+# Setup the KINDLE_MODEL variable iwth a valid value from the enum above
+kmfc="$(cut -c1 /proc/usid)"
+if [ "${kmfc}" == "B" ] || [ "${kmfc}" == "9" ] ; then
+    # Older device ID scheme
+    kmodel="$(cut -c3-4 /proc/usid)"
+    case "${kmodel}" in
+        "24" | "1B" | "1D" | "1F" | "1C" | "20" )
+            # PaperWhite 1 (2012)
+            KINDLE_MODEL=$MODEL_PW
+        ;;
+        "D4" | "5A" | "D5" | "D6" | "D7" | "D8" | "F2" | "17" | "60" | "F4" | "F9" | "62" | "61" | "5F" )
+            # PaperWhite 2 (2013)
+            KINDLE_MODEL=$MODEL_PW2
+        ;;
+        "13" | "54" | "2A" | "4F" | "52" | "53" )
+            # Voyage...
+            KINDLE_MODEL=$MODEL_KV
+        ;;
+        "C6" | "DD" )
+            # KT2...
+            KINDLE_MODEL=$MODEL_KT2
+        ;;
+        "0F" | "11" | "10" | "12" )
+            # Touch
+            KINDLE_MODEL=$MODEL_K5
+        ;;
+        * )
+            # Fallback... We shouldn't ever hit that.
+            KINDLE_MODEL=$MODEL_K5
+        ;;
+    esac
+else
+    # Try the new device ID scheme...
+    kmodel="$(cut -c4-6 /proc/usid)"
+    case "${kmodel}" in
+        "0G1" | "0G2" | "0G4" | "0G5" | "0G6" | "0G7" | "0KB" | "0KC" | "0KD" | "0KE" | "0KF" | "0KG" | "0LK" | "0LL" )
+            # PW3...
+            KINDLE_MODEL=$MODEL_PW3
+        ;;
+        "0GC" | "0GD" | "0GR" | "0GS" | "0GT" | "0GU" )
+            # Oasis...
+            KINDLE_MODEL=$MODEL_KOA
+        ;;
+        "0DU" | "0K9" | "0KA" )
+            # KT3...
+            KINDLE_MODEL=$MODEL_KT3
+        ;;
+        "0LM" | "0LN" | "0LP" | "0LQ" | "0P1" | "0P2" | "0P6" | "0P7" | "0P8" | "0S1" | "0S2" | "0S3" | "0S4" | "0S7" | "0SA" )
+            # KOA2...
+            KINDLE_MODEL=$MODEL_KOA2
+        ;;
+        "0PP" | "0T1" | "0T2" | "0T3" | "0T4" | "0T5" | "0T6" | "0T7" | "0TJ" | "0TK" | "0TL" | "0TM" | "0TN" | "102" | "103" | "16Q" | "16R" | "16S" | "16T" | "16U" | "16V" )
+            # PW4...
+            KINDLE_MODEL=$MODEL_PW4
+        ;;
+        "10L" | "0WF" | "0WG" | "0WH" | "0WJ" | "0VB" )
+            # KT4...
+            KINDLE_MODEL=$MODEL_KT4
+        ;;
+        "11L" | "0WQ" | "0WP" | "0WN" | "0WM" | "0WL" )
+            # KOA3...
+            KINDLE_MODEL=$MODEL_KOA3
+        ;;
+        "1LG" | "1Q0" | "1PX" | "1VD" | "219" | "21A" | "2BH" | "2BJ" | "2DK" )
+            # PW5...
+            KINDLE_MODEL=$MODEL_PW5
+        ;;
+        "22D" | "25T" | "23A" | "2AQ" | "2AP" | "1XH" | "22C" )
+            # KT5...
+            KINDLE_MODEL=$MODEL_KT5
+        ;;
+        "27J" | "2BL" | "263" | "227" | "2BM" | "23L" | "23M" | "270" )
+            # KS...
+            KINDLE_MODEL=$MODEL_KS
+        ;;
+        "349" | "346" | "33X" | "33W" | "3HA" | "3H5" | "3H3" | "3H8" | "3J5" | "3JS" )
+            # PW6
+            KINDLE_MODEL=$MODEL_PW6
+        ;;
+        "3L5" | "3L6" | "3L4" | "3L3" | "A89" | "3L2" | "3KM" )
+            # KT6
+            KINDLE_MODEL=$MODEL_KT6
+        ;;
+        "3H9" | "3H4" | "3HB" | "3H6" | "3H2" | "34X" | "3H7" | "3JT" | "3J6" | "456" )
+            # CS
+            KINDLE_MODEL=$MODEL_CS
+        ;;
+        * )
+            # Fallback... We shouldn't ever hit that.
+            KINDLE_MODEL=$MODEL_PW3
+        ;;
+    esac
+fi
+
+# Get the Kindle's architecture
+ARCH="armel"
+# Check if the Kindle is ARMHF or ARMEL
+if ls /lib | grep ld-linux-armhf.so; then
+    ARCH="armhf"
+fi
+
+
+
+# Adapt the K5 logging calls to the simpler legacy syntax
+logmsg()
+{
+	f_log "${1}" "${HACKNAME}" "${2}" "${3}" "${4}"
+	# Add our own echo, like on legacy devices (useful for MRPI logging, since f_log's one is sent to /dev/console)
+	if [ "${1}" != "D" ] ; then
+		echo "system: ${1} ${HACKNAME}:${2}:${3}:${4}"
+	fi
+}
+
+
+
+###
+# Progressbar stuff
+###
+# Some constants...
+_BLANKET="com.lab126.blanket"
+_OTAMODULE="${_BLANKET}.ota"
+FBINK_BIN="kmc/$ARCH/fbink" # Assume we are running as part of HAKT
+
+# Check if blanket is running
+if pkill -0 blanket ; then
+	BLANKET_IS_UP="true"
+else
+	BLANKET_IS_UP="false"
+fi
+
+# Send progress to blanket, or print it manually otherwise
+otautils_update_progress_indicator()
+{
+	local cur_percentage="${1}"
+
+	if [ "${BLANKET_IS_UP}" == "true" ] ; then
+		lipc-send-event ${_OTAMODULE} otaSplashProgress -i ${cur_percentage}
+	else
+		# NOTE: We can actually draw a progress bar with FBInk!
+        ${FBINK_BIN} -qP ${cur_percentage} -y $(( -6 ))
+	fi
+}
+
+
+# Check if arg is an int
+is_integer()
+{
+	# Cheap trick ;)
+	[ "${1}" -eq "${1}" ] 2>/dev/null
+	return $?
+}
+
+# The amount of steps needed to fill the progress bar
+# I'm lazy, so just count the amount of calls in the script itself ;)
+# NOTE: Yup, $0 still points to the original script that sourced us :).
+[ -z ${STEPCOUNT} ] && STEPCOUNT="$(grep -c '^[[:blank:]]*otautils_update_progressbar$' ${0} 2>/dev/null)"
+# Make sure it's sane...
+is_integer "${STEPCOUNT}" || STEPCOUNT=1
+# NOTE: If you need to for some strange reason, this can be overriden in the update script
+
+# In case we need to catch failure early...
+otautils_die()
+{
+	local error_string="${1}"
+
+	if [ "${BLANKET_IS_UP}" == "true" ] ; then
+		lipc-send-event ${_OTAMODULE} otaSplashError -s "${error_string}"
+	else
+		${FBINK_BIN} -qpm -y -3 "Error: ${error_string}"
+	fi
+	if [ $? -eq 0 ] ; then
+		logmsg "D" "guierror" "" "display error screen: ${error_string}"
+	else
+		logmsg "W" "guierror" "status=fail" "display error screen: ${error_string}"
+	fi
+
+	# And it is called die, after all ;)
+	sleep 5
+	exit 1
+}
+
+# Fill up our progress bar, one step at a time
+# Keep track of what we're doing...
+_CUR_STEP=0
+_CUR_PERCENTAGE=0
+otautils_update_progressbar()
+{
+	# One more step...
+	_CUR_STEP=$((_CUR_STEP + 1))
+	# Bounds checking...
+	if [ ${_CUR_STEP} -lt 0 ] ; then
+		_CUR_STEP=0
+	elif [ ${_CUR_STEP} -gt ${STEPCOUNT} ] ; then
+		_CUR_STEP=${STEPCOUNT}
+	fi
+
+	# Make that a percentage
+	local bar_percentage=$(( (${_CUR_STEP} * 100) / ${STEPCOUNT} ))
+	# We can only *fill* the bar...
+	if [ ${_CUR_PERCENTAGE} -lt ${bar_percentage} ] ; then
+		_CUR_PERCENTAGE=${bar_percentage}
+	fi
+
+	# Make sure that percentage is sane...
+	is_integer "${_CUR_PERCENTAGE}" || _CUR_PERCENTAGE=0
+	# Bounds checking...
+	if [ ${_CUR_PERCENTAGE} -gt 100 ] ; then
+		_CUR_PERCENTAGE=100
+	elif [ ${_CUR_PERCENTAGE} -lt 0 ] ; then
+		_CUR_PERCENTAGE=0
+	fi
+
+	# Finally, refresh the bar
+	otautils_update_progress_indicator "${_CUR_PERCENTAGE}"
+	if [ $? -eq 0 ] ; then
+		logmsg "D" "guiprogress" "progress=${_CUR_PERCENTAGE}" "update progress indicator"
+	else
+		logmsg "W" "guiprogress" "progress=${_CUR_PERCENTAGE},status=fail" "update progress indicator"
+	fi
+}
+
+# This may come in handy for bridge related packages...
+make_mutable() {
+	local my_path="${1}"
+	# NOTE: Can't do that on symlinks, hence the hoop-jumping...
+	if [ -d "${my_path}" ] ; then
+		find "${my_path}" -type d -exec chattr -i '{}' \;
+		find "${my_path}" -type f -exec chattr -i '{}' \;
+	elif [ -f "${my_path}" ] ; then
+		chattr -i "${my_path}"
+	fi
+}
+
+make_immutable() {
+	local my_path="${1}"
+	if [ -d "${my_path}" ] ; then
+		find "${my_path}" -type d -exec chattr +i '{}' \;
+		find "${my_path}" -type f -exec chattr +i '{}' \;
+	elif [ -f "${my_path}" ] ; then
+		chattr +i "${my_path}"
+	fi
+}
+
+# That's all, folks ;)
