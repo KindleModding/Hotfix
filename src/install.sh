@@ -10,11 +10,9 @@ cleanup()
     rm -f libotautils6
 }
 
-HACKNAME="hotfix_installer"
+HACKNAME="HAKT"
 logmsg "I" "arch_check" "" "Detected architecture - $ARCH"
-
-
-logmsg "I" "hotfix_installer" "" "Installing Hotfix (previously bridge)."
+logmsg "I" "hakt_installer" "" "Installing Hotfix (previously bridge)."
 
 ###
 ## Here we go :)
@@ -26,6 +24,7 @@ logmsg "I" "install" "" "checking amount of free storage space..."
 if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1)))" ] ; then
     logmsg "C" "install" "code=1" "not enough space left in varlocal"
     cleanup()
+    sleep 5
     return 1
 fi
 
@@ -69,6 +68,15 @@ chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/hotfix.sh"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/run_hotfix.sh"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/libhotfixutils"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/jobs/*"
+
+logmsg "I" "banner" "" ""
+logmsg "I" "banner" "" ""
+logmsg "I" "banner" "" "KAHT INSTALLER (${HOTFIX_VERSION})"
+logmsg "I" "banner" "" "Installing on arch=${ARCH}"
+logmsg "I" "banner" "" "Based on NiLuJe's hotfix & hotfix installer"
+logmsg "I" "banner" "" "Created by HackerDude"
+logmsg "I" "banner" "" ""
+logmsg "I" "banner" "" ""
 
 # Fix Gandalf permissions
 logmsg "I" "install" "" "Fixing KMC Gandalf permissions"
@@ -136,4 +144,5 @@ make_immutable "${MKK_PERSISTENT_STORAGE}"
 logmsg "I" "install" "" "done"
 
 otautils_update_progressbar
+sleep 5
 return 0
