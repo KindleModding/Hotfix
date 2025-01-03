@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v4
       if: steps.cache-kindletool.outputs.cache-hit != 'true'
       with:
-        repository: KindleModding/KindleTool
+        repository: NiLuJe/KindleTool
     - name: Cache Kindletool
       id: cache-kindletool
       uses: actions/cache@v4

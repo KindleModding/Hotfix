@@ -26,8 +26,10 @@ mkdir ./build ./build_tmp ./build_cache
 # Build native stuff
 ###
 echo "* Building natives"
-mkdir -p ./src/kmc/armel/libs/
-mkdir -p ./src/kmc/armhf/libs/
+mkdir -p ./src/kmc/armel/lib/
+mkdir -p ./src/kmc/armhf/lib/
+mkdir -p ./src/kmc/armel/bin/
+mkdir -p ./src/kmc/armhf/bin/
 
 echo "* Building sh_integration..."
 cd sh_integration
@@ -41,22 +43,22 @@ cd builddir_armhf
 meson compile
 cd ../../
 echo "* Copying sh_integration"
-cp ./sh_integration/builddir_armel/extractor/sh_integration_extractor.so ./src/kmc/armel/
-cp ./sh_integration/builddir_armel/launcher/sh_integration_launcher ./src/kmc/armel/
-cp ./sh_integration/builddir_armhf/extractor/sh_integration_extractor.so ./src/kmc/armhf/
-cp ./sh_integration/builddir_armhf/launcher/sh_integration_launcher ./src/kmc/armhf/
+cp -f ./sh_integration/builddir_armel/extractor/sh_integration_extractor.so ./src/kmc/armel/lib/
+cp -f ./sh_integration/builddir_armel/launcher/sh_integration_launcher ./src/kmc/armel/bin/
+cp -f ./sh_integration/builddir_armhf/extractor/sh_integration_extractor.so ./src/kmc/armhf/lib/
+cp -f ./sh_integration/builddir_armhf/launcher/sh_integration_launcher ./src/kmc/armhf/bin/
 
 echo "* Building fbink..."
 cd FBInk
 make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
 make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
-cp ./Release/fbink ../src/kmc/armel/
-cp ./Release/libfbink* ../src/kmc/armel/libs/
+cp -f ./Release/fbink ../src/kmc/armel/bin/
+cp -f ./Release/libfbink* ../src/kmc/armel/lib/
 make clean
 make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
 make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
-cp ./Release/fbink ../src/kmc/armhf/
-cp ./Release/libfbink* ../src/kmc/armhf/libs/
+cp -f ./Release/fbink ../src/kmc/armhf/bin/
+cp -f ./Release/libfbink* ../src/kmc/armhf/lib/
 cd ..
 
 ###
@@ -66,26 +68,26 @@ cd ..
 echo "* Copying source to build dir"
 cp -r ./src ./build_tmp/src
 
-echo "* Downloading official firmware from Amazon (Scribe)"
-if [ ! -f ./build_cache/update_kindle_scribe.bin ]; then
-   wget https://www.amazon.com/update_Kindle_Scribe -q -O ./build_cache/update_kindle_scribe.bin
-else
-   echo "* Official firmware found in cache - SKIPPING"
-fi
-
+##echo "* Downloading official firmware from Amazon (Scribe)"
+##if [ ! -f ./build_cache/update_kindle_scribe.bin ]; then
+##   wget https://www.amazon.com/update_Kindle_Scribe -q -O ./build_cache/update_kindle_scribe.bin
+##else
+##   echo "* Official firmware found in cache - SKIPPING"
+##fi
+##
 echo "* Downloading official firmware from Amazon (PW6)"
 if [ ! -f ./build_cache/update_kindle_pw6.bin ]; then
    wget https://www.amazon.com/update_KindlePaperwhite_12th_Gen_2024 -q -O ./build_cache/update_kindle_pw6.bin
 else
    echo "* Official firmware found in cache - SKIPPING"
 fi
-
-echo "* Downloading official firmware from Amazon (PW5)"
-if [ ! -f ./build_cache/update_kindle_pw5.bin ]; then
-   wget https://www.amazon.com/update_Kindle_Paperwhite_11th_Gen -q -O ./build_cache/update_kindle_pw5.bin
-else
-   echo "* Official firmware found in cache - SKIPPING"
-fi
+##
+##echo "* Downloading official firmware from Amazon (PW5)"
+##if [ ! -f ./build_cache/update_kindle_pw5.bin ]; then
+##   wget https://www.amazon.com/update_Kindle_Paperwhite_11th_Gen -q -O ./build_cache/update_kindle_pw5.bin
+##else
+##   echo "* Official firmware found in cache - SKIPPING"
+##fi
 
 cp -r build_cache tmp_build_cache
 
@@ -113,12 +115,12 @@ EOF
 mksquashfs ./build_tmp/patched_uks ./build_tmp/src/mkk/updater_keys.sqsh
 
 echo "* Generating device list"
-DEVICE_LIST="$(${KINDLETOOL} convert -i tmp_build_cache/update_kindle*.bin 2>&1 | grep -o "^Device .*" | grep -o "0x[[:xdigit:]]*" | tr "\n" " ")"
-echo $DEVICE_LIST
+#DEVICE_LIST="$(${KINDLETOOL} convert -i tmp_build_cache/update_kindle*.bin 2>&1 | grep -o "^Device .*" | grep -o "0x[[:xdigit:]]*" | tr "\n" " ")"
+#echo $DEVICE_LIST
 
-DEVICES="$(echo "$DEVICE_LIST" | xargs | sed "s/ / -d /g") -d 0xE27"
-echo $DEVICES
+#DEVICES="$(echo "$DEVICE_LIST" | xargs | sed "s/ / -d /g")"
+#echo $DEVICES
 
 echo "* Building hotfix"
 cd ./build_tmp/src
-${KINDLETOOL} create ota2 -d kindle5 -d ${DEVICES} -s min -t max -O -C . "../../build/Update_hotfix_universal.bin"
+${KINDLETOOL} create ota2 -d kindle5 -s min -t max -O -C . "../../build/Update_hotfix_universal.bin"
