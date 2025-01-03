@@ -1,15 +1,22 @@
 setup_gandalf()
 {
+	# Fix Gandalf permissions
+	logmsg "I" "install" "" "Fixing KMC Gandalf permissions"
+	for gandalf_arch in armel armhf; do
+		make_mutable "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+		chown root:root "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+		chmod a+rx "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+		chmod +s "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+		make_immutable "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+	done
+
 	make_mutable "${KMC_PERSISTENT_STORAGE}"
 	logmsg "I" "setup_gandalf" "" "Setting up gandalf... you shall not pass!"
 	logmsg "I" "install" "" "Linking gandalf to MKK"
-	rm -f "${MKK_PERSISTENT_STORAGE}/gandalf"
-	ln -sf "${KMC_PERSISTENT_STORAGE}/${ARCH}/gandalf" "${MKK_PERSISTENT_STORAGE}/gandalf"
 
 	make_mutable "${MKK_PERSISTENT_STORAGE}"
-	chown root:root "${KMC_PERSISTENT_STORAGE}/${ARCH}/gandalf"
-	chmod a+rx "${KMC_PERSISTENT_STORAGE}/${ARCH}/gandalf"
-	chmod +s "${KMC_PERSISTENT_STORAGE}/${ARCH}/gandalf"
+	rm -f "${MKK_PERSISTENT_STORAGE}/gandalf"
+	ln -sf "${KMC_PERSISTENT_STORAGE}/bin/gandalf" "${MKK_PERSISTENT_STORAGE}/gandalf"
 	ln -sf "${MKK_PERSISTENT_STORAGE}/gandalf" "${MKK_PERSISTENT_STORAGE}/su"
 	make_immutable "${MKK_PERSISTENT_STORAGE}"
 

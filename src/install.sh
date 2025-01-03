@@ -86,12 +86,13 @@ chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/jobs/*"
 
 # Fix Gandalf permissions
 logmsg "I" "install" "" "Fixing KMC Gandalf permissions"
-chown root:root "${KMC_PERSISTENT_STORAGE}/armel/bin/gandalf"
-chmod a+rx "${KMC_PERSISTENT_STORAGE}/armel/bin/gandalf"
-chmod +s "${KMC_PERSISTENT_STORAGE}/armel/bin/gandalf"
-chown root:root "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
-chmod a+rx "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
-chmod +s "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
+for gandalf_arch in armel armhf; do
+    make_mutable "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+    chown root:root "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+    chmod a+rx "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+    chmod +s "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+    make_immutable "${KMC_PERSISTENT_STORAGE}/${gandalf_arch}/bin/gandalf"
+done
 
 # Setup binaries
 logmsg "I" "install" "" "Setting up KMC binaries"
@@ -106,7 +107,7 @@ logmsg "I" "install" "" "Installing kmc upstart job"
 make_mutable "/etc/upstart/kmc.conf"
 rm -rf "/etc/upstart/bridge.conf" # Delete OLD bridge upstart job (our KMC job is much nicer)
 rm -rf "/etc/upstart/kmc.conf"
-cp -f "${KMC_PERSISTENT_STORAGE}/kmc.conf" "/etc/upstart/kmc.conf"
+cp -f "${KMC_PERSISTENT_STORAGE}/hotfix/kmc.conf" "/etc/upstart/kmc.conf"
 chmod 0664 "/etc/upstart/kmc.conf"
 make_immutable "/etc/upstart/kmc.conf"
 
@@ -135,7 +136,6 @@ chmod a+rx "/mnt/us/libkh/bin/fbink"
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing the hotfix booklet"
-
 rm -f /mnt/us/documents/run_bridge.sh # Remove old runner
 echo "${HOTFIX_VERSION}" > /mnt/us/documents/run_hotfix.run_hotfix
 
