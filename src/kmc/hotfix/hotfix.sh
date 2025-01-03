@@ -3,7 +3,7 @@
 
 # Pull some helper functions and the such
 source /etc/upstart/functions
-source /var/local/kmc/libhotfixutils
+source /var/local/kmc/hotfix/libhotfixutils
 LOG_DOMAIN="jb_hotfix"
 
 # Here we go...
@@ -13,6 +13,6 @@ logmsg "I" "tools" "" "Mounting root as RW"
 mntroot rw
 
 for JOB in ${KMC_PERSISTENT_STORAGE}/hotfix/jobs/*.sh ; do
-    logmsg "I" "jobrunner" "" "Running job: ${JOB}"
+    logmsg "I" "jobrunner" "" "Running job: $(basename $JOB)"
     source "$(realpath $JOB)"
 done

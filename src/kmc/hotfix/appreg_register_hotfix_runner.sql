@@ -17,7 +17,7 @@ INSERT INTO properties (handlerId, name, value) VALUES ('org.kindlemodding.hotfi
 INSERT INTO properties (handlerId, name, value) VALUES ('org.kindlemodding.hotfix_launcher', 'maxPauseTime', '600');
 INSERT INTO properties (handlerId, name, value) VALUES ('org.kindlemodding.hotfix_launcher', 'maxUnloadTime', '600');
 INSERT INTO properties (handlerId, name, value) VALUES ('org.kindlemodding.hotfix_launcher', 'maxLoadTime', '600');
-INSERT INTO properties (handlerId, name, value) VALUES ('org.kindlemodding.hotfix_launcher', 'command', 'sh /var/local/kmc/hotfix/run_hotfix.sh');
+INSERT INTO properties (handlerId, name, value) VALUES ('org.kindlemodding.hotfix_launcher', 'command', '/bin/sh /var/local/kmc/hotfix/run_hotfix.sh');
 
 INSERT INTO associations (interface, handlerId, contentId, defaultAssoc) VALUES ('application', 'org.kindlemodding.hotfix_launcher', 'MT:kindlemodding/run_hotfix', 'true');
 
