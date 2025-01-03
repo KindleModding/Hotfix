@@ -11,7 +11,7 @@
 
 ## Check our args...
 if [ "$#" -ne 1 ] ; then
-	eips 1 0 "No arg passed. Select from mrpi or runme"
+	/var/local/kmc/bin/fbink -x 1 -y 0 -S 3  "No arg passed. Select from mrpi or runme"
 	return 0
 fi
 
@@ -23,7 +23,7 @@ case "${1}" in
 				if [ -x "/var/local/mkk/gandalf" ] ; then
 					exec /var/local/mkk/su -s /bin/sh -c "/mnt/us/extensions/MRInstaller/bin/mrinstaller.sh launch_installer"
 				else
-					eips 1 0 "No wizard to help you out.              "
+					/var/local/kmc/bin/fbink -x 1 -y 0 -S 3  "No wizard to help you out.              "
 					# Run it anyway, who knows.
 					exec /bin/sh "/mnt/us/extensions/MRInstaller/bin/mrinstaller.sh" launch_installer
 				fi
@@ -31,7 +31,7 @@ case "${1}" in
 				exec /bin/sh "/mnt/us/extensions/MRInstaller/bin/mrinstaller.sh" launch_installer
 			fi
 		else
-			eips 1 0 "MRPI is not installed.                  "
+			/var/local/kmc/bin/fbink -x 1 -y 0 -S 3  "MRPI is not installed.                  "
 		fi
 	;;
 	# Launch user script!
@@ -41,7 +41,7 @@ case "${1}" in
 				if [ -x "/var/local/mkk/gandalf" ] ; then
 					exec /var/local/mkk/su -s /bin/sh -c "/mnt/us/RUNME.sh"
 				else
-					eips 1 0 "No wizard to help you out.              "
+					/var/local/kmc/bin/fbink -x 1 -y 0 -S 3  "No wizard to help you out.              "
 					# Run it anyway, who knows.
 					exec /bin/sh "/mnt/us/RUNME.sh"
 				fi
@@ -49,11 +49,11 @@ case "${1}" in
 				exec /bin/sh "/mnt/us/RUNME.sh"
 			fi
 		else
-			eips 1 0 "No user script found.                   "
+			/var/local/kmc/bin/fbink -x 1 -y 0 -S 3  "No user script found.                   "
 		fi
 	;;
 	* )
-		eips 1 0 "Wrong arg. Select from mrpi or runme    "
+		/var/local/kmc/bin/fbink -x 1 -y 0 -S 3  "Wrong arg. Select from mrpi or runme    "
 	;;
 esac
 
