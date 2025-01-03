@@ -163,7 +163,7 @@ logmsg()
 	if [ "${1}" != "D" ] ; then
 		echo "system: ${1} ${HACKNAME}:${2}:${3}:${4}"
 	fi
-	${FBINK_BIN} -x 1 -y $_LOGMSG_Y "${1}: ${4}" -S 3
+	${FBINK_BIN} -x 1 -y $_LOGMSG_Y -p -S 3 "${1}: ${4}"
 	_LOGMSG_Y=$(($_LOGMSG_Y + 1))
 }
 

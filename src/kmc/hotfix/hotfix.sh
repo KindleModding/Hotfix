@@ -20,4 +20,6 @@ done
 logmsg "I" "hotfix" "" "Mounting root as RO"
 mntroot ro
 
-logmsg "I" "hotfix" "" "Hotfix Complete! You may need to reboot."
+logmsg "I" "hotfix" "" "Hotfix Complete! Restarting GUI."
+sleep 3 # So they can read what's about to happen
+restart lab126_gui
