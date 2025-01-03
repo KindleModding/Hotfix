@@ -21,10 +21,9 @@ otautils_update_progressbar
 
 # Make sure we have enough space left (>512KB) in /var/local first...
 logmsg "I" "install" "" "checking amount of free storage space..."
-if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1)))" ] ; then
+if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(stat -c %s kmc.tar) + $(stat -c %s mkk.tar)))" ] ; then
     logmsg "C" "install" "code=1" "not enough space left in varlocal"
     cleanup()
-    sleep 5
     return 1
 fi
 
@@ -127,6 +126,15 @@ mkdir -p "/mnt/us/libkh/bin"
 rm -f /mnt/us/libkh/bin/fbink
 cp -f "${KMC_PERSISTENT_STORAGE}/${ARCH}/bin/fbink" "/mnt/us/libkh/bin/fbink"
 chmod a+rx "/mnt/us/libkh/bin/fbink"
+
+otautils_update_progressbar
+
+logmsg "I" "install_dispatch" "" "Copying the dispatch script"
+make_mutable "/usr/bin/logThis.sh"
+rm -rf "/usr/bin/logThis.sh"
+cp -f "${MKK_PERSISTENT_STORAGE}/dispatch.sh" "/usr/bin/logThis.sh"
+chmod 0755 "/usr/bin/logThis.sh"
+make_immutable "/usr/bin/logThis.sh"
 
 otautils_update_progressbar
 
