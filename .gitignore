@@ -2,10 +2,10 @@
 /build_cache
 /build_tmp
 /tmp_build_cache
-/src/kmc/armel/*
-/src/kmc/armhf/*
+/src/kmc/*/bin/*
+/src/kmc/*/lib/*
 
 # We don't build gandalf ourselves at this time
-!/src/kmc/*/gandalf
-!/src/kmc/*/su
-# I know the above is a bit hacky - BUT IT WORKS
+!/src/kmc/*/bin/gandalf
+!/src/kmc/*/bin/su
+# I know the above (copied su binary) is a bit hacky - BUT IT WORKS

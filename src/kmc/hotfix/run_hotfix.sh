@@ -8,4 +8,5 @@ if ls /lib | grep ld-linux-armhf.so; then
     ARCH="armhf"
 fi
 
-/var/local/kmc/${ARCH}/su su -c sh /var/local/kmc/hotfix.sh
+# Yeah this is a weird command but I'm too lazy to test if it works without the "su -c"
+/var/local/kmc/${ARCH}/bin/su su -c sh /var/local/kmc/hotfix/hotfix.sh
