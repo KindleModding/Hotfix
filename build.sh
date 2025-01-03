@@ -19,8 +19,8 @@ KINDLETOOL="${PWD}/utils/kindletool"
 ###
 # Cleanup previous build
 ###
-rm -rf ./build ./build_tmp ./tmp_build_cache
-mkdir ./build ./build_tmp ./build_cache
+sudo rm -rf ./build ./build_tmp ./tmp_build_cache
+mkdir -p ./build ./build_tmp ./build_cache
 
 ###
 # Build native stuff
@@ -50,6 +50,7 @@ cp -f ./sh_integration/builddir_armhf/launcher/sh_integration_launcher ./src/kmc
 
 echo "* Building fbink..."
 cd FBInk
+make clean
 make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
 make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
 cp -f ./Release/fbink ../src/kmc/armel/bin/
@@ -113,6 +114,12 @@ rvyJnS2MKLG2cczjlQIDAQAB
 -----END PUBLIC KEY-----
 EOF
 mksquashfs ./build_tmp/patched_uks ./build_tmp/src/mkk/updater_keys.sqsh
+
+echo "* Packing persistent storage folders"
+tar -cf ./build_tmp/src/kmc.tar -C ./build_tmp/src/kmc/ .
+tar -cf ./build_tmp/src/mkk.tar -C ./build_tmp/src/mkk/ .
+rm -rf ./build_tmp/src/kmc
+rm -rf ./build_tmp/src/mkk
 
 echo "* Generating device list"
 #DEVICE_LIST="$(${KINDLETOOL} convert -i tmp_build_cache/update_kindle*.bin 2>&1 | grep -o "^Device .*" | grep -o "0x[[:xdigit:]]*" | tr "\n" " ")"

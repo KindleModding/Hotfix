@@ -26,6 +26,7 @@ ARCH="armel"
 if ls /lib | grep ld-linux-armhf.so; then
     ARCH="armhf"
 fi
+FBINK_BIN="kmc/${ARCH}/fbink"
 
 
 
@@ -37,6 +38,7 @@ logmsg()
 	if [ "${1}" != "D" ] ; then
 		echo "system: ${1} ${HACKNAME}:${2}:${3}:${4}"
 	fi
+	${FBINK_BIN} -x 1 -y 10 "logmsg: ${1} ${HACKNAME}:${2}:${3}:${4}"
 }
 
 
@@ -47,7 +49,6 @@ logmsg()
 # Some constants...
 _BLANKET="com.lab126.blanket"
 _OTAMODULE="${_BLANKET}.ota"
-FBINK_BIN="kmc/${ARCH}/fbink" # Assume we are running as part of HAKT
 
 # Check if blanket is running
 if pkill -0 blanket ; then

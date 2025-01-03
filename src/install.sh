@@ -20,18 +20,15 @@ RP_BACKUP_STORAGE="/mnt/us/rp"
 ARCH="armel"
 
 # Check if the Kindle ihotfix/s ARMHF or ARMEL
-if ls /lib | grep ld-lihotfix/nux-armhf.so; then
+if ls /lib | grep ld-linux-armhf.so; then
     ARCH="armhf"
 fi
-
 
 HACKNAME="hotfix_installer"
 logmsg "I" "arch_check" "" "Detected architecture - $ARCH"
 
 
 logmsg "I" "hotfix_installer" "" "Installing Hotfix (previously bridge)."
-HACKNAME="jb_bridge"
-
 
 ###
 ## Here we go :)
@@ -70,12 +67,9 @@ chmod g-s "${MKK_PERSISTENT_STORAGE}"
 # Copy data from package to persistent storage
 ###
 otautils_update_progressbar
-logmsg "I" "install" "" "Copying MKK persistent storage data"
-cp -r "mkk/*" "${MKK_PERSISTENT_STORAGE}/"
-
-otautils_update_progressbar
-logmsg "I" "install" "" "Copying KMC persistent storage data"
-cp -r "kmc/*" "${KMC_PERSISTENT_STORAGE}/"
+logmsg "I" "install" "" "Unpacking persistent storage data"
+tar -xf mkk.tar -C "${MKK_PERSISTENT_STORAGE}"
+tar -xf kmc.tar -C "${KMC_PERSISTENT_STORAGE}"
 
 ###
 # Fix permissions for KMC (MKK doesn't need this)
@@ -96,7 +90,7 @@ chown root:root "${KMC_PERSISTENT_STORAGE}/armel/bin/gandalf"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/armel/bin/gandalf"
 chmod +s "${KMC_PERSISTENT_STORAGE}/armel/bin/gandalf"
 chown root:root "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
-chmod a+rx "${KMC_PERSISTENT_STarmelORAGE}/armhf/bin/gandalf"
+chmod a+rx "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
 chmod +s "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
 
 # Setup binaries
@@ -112,7 +106,7 @@ logmsg "I" "install" "" "Installing kmc upstart job"
 make_mutable "/etc/upstart/kmc.conf"
 rm -rf "/etc/upstart/bridge.conf" # Delete OLD bridge upstart job (our KMC job is much nicer)
 rm -rf "/etc/upstart/kmc.conf"
-cp -f kmc/kmc.conf "/etc/upstart/kmc.conf"
+cp -f "${KMC_PERSISTENT_STORAGE}/kmc.conf" "/etc/upstart/kmc.conf"
 chmod 0664 "/etc/upstart/kmc.conf"
 make_immutable "/etc/upstart/kmc.conf"
 
@@ -135,7 +129,7 @@ ln -sf "${MKK_PERSISTENT_STORAGE}/gandalf" "${MKK_PERSISTENT_STORAGE}/su"
 logmsg "I" "install" "" "Installing fbink"
 mkdir -p "/mnt/us/libkh/bin"
 rm -f /mnt/us/libkh/bin/fbink
-cp -f "kmc/${ARCH}/bin/fbink" "/mnt/us/libkh/bin/fbink"
+cp -f "${KMC_PERSISTENT_STORAGE}/${ARCH}/bin/fbink" "/mnt/us/libkh/bin/fbink"
 chmod a+rx "/mnt/us/libkh/bin/fbink"
 
 otautils_update_progressbar
@@ -147,8 +141,8 @@ echo "${HOTFIX_VERSION}" > /mnt/us/documents/run_hotfix.run_hotfix
 
 
 logmsg "I" "install" "" "Modifying appreg.db"
-sqlite3 /var/local/appreg.db ".read ./kmc/hotfix/appreg_register_sh_integration.sql"
-sqlite3 /var/local/appreg.db ".read ./kmc/hotfix/appreg_register_hotfix_runner.sql"
+sqlite3 /var/local/appreg.db ".read ${KMC_PERSISTENT_STORAGE}/hotfix/appreg_register_sh_integration.sql"
+sqlite3 /var/local/appreg.db ".read ${KMC_PERSISTENT_STORAGE}/hotfix/appreg_register_hotfix_runner.sql"
 
 cleanup()
 logmsg "I" "install" "" "done"
