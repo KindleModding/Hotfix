@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # Pull libOTAUtils for logging & progress handling
-source ./libotautils5
+source ./libotautils6
 
 cleanup()
 {
     rm -rf kmc/
     rm -rf mkk/
-    rm -f libotautils5
+    rm -f libotautils6
 }
 
 # Useful vars
