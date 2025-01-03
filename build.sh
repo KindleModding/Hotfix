@@ -11,6 +11,7 @@
 # Try sudo
 sudo echo
 
+export HAKT_VERSION="v2.0.0-DEV"
 export KT_WITH_UNKNOWN_DEVCODES="1"
 
 # Fall back to the bundled KindleTool if there aren't any in PATH
@@ -128,6 +129,6 @@ echo "* Generating device list"
 #DEVICES="$(echo "$DEVICE_LIST" | xargs | sed "s/ / -d /g")"
 #echo $DEVICES
 
-echo "* Building hotfix"
+echo "* Building HAKT"
 cd ./build_tmp/src
-${KINDLETOOL} create ota2 -d kindle5 -s min -t max -O -C . "../../build/Update_hotfix_universal.bin"
+${KINDLETOOL} create ota2 -d kindle5 -s min -t max -O -C . "../../build/Update_HAKT_${HAKT_VERSION}_install.bin"

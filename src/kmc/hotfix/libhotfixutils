@@ -22,6 +22,7 @@ ARCH="armel"
 if ls /lib | grep ld-linux-armhf.so; then
     ARCH="armhf"
 fi
+FBINK_BIN="${KMC_PERSISTENT_STORAGE}/${ARCH}/bin/fbink"
 ROOTPART="$(rdev | awk '{ print $1; }')" # Hotfix is ran as a booklet, we are ALWAYS running from main
 
 ###
@@ -154,6 +155,7 @@ fi
 
 
 # Adapt the K5 logging calls to the simpler legacy syntax
+_LOGMSG_Y=2
 logmsg()
 {
 	f_log "${1}" "${HACKNAME}" "${2}" "${3}" "${4}"
@@ -161,6 +163,8 @@ logmsg()
 	if [ "${1}" != "D" ] ; then
 		echo "system: ${1} ${HACKNAME}:${2}:${3}:${4}"
 	fi
+	${FBINK_BIN} -x 1 -y $_LOGMSG_Y "${1}: ${4}" -S 3
+	_LOGMSG_Y=$(($_LOGMSG_Y + 1))
 }
 
 
@@ -171,7 +175,6 @@ logmsg()
 # Some constants...
 _BLANKET="com.lab126.blanket"
 _OTAMODULE="${_BLANKET}.ota"
-FBINK_BIN="kmc/$ARCH/fbink" # Assume we are running as part of HAKT
 
 # Check if blanket is running
 if pkill -0 blanket ; then

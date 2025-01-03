@@ -63,5 +63,5 @@ jobs:
           sh ./build.sh
     - uses: actions/upload-artifact@v4
       with:
-        name: Update_hotfix_universal
-        path: build/Update_hotfix_universal.bin
+        name: KAHT_BUILD_DEV
+        path: build/
