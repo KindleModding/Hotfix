@@ -144,7 +144,8 @@ otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing the hotfix booklet"
 rm -f /mnt/us/documents/run_bridge.sh # Remove old runner
-echo "${HOTFIX_VERSION}" > /mnt/us/documents/run_hotfix.run_hotfix
+rm -f /mnt/us/documents/run_hotfix.run_hotfix # One person got a beta with this lol
+echo "${HOTFIX_VERSION}" > "/mnt/us/documents/Run Hotfix.run_hotfix"
 
 
 logmsg "I" "install" "" "Modifying appreg.db"
