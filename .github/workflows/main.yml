@@ -39,8 +39,8 @@ jobs:
       run: sudo apt-get install meson
     - name: Download toolchain
       run: |
-          wget -q https://github.com/koreader/koxtoolchain/releases/latest/download/kindlepw2.tar.gz -O - | tar -xzf - -C ~
-          wget -q https://github.com/koreader/koxtoolchain/releases/latest/download/kindlehf.tar.gz -O - | tar -xzf - -C ~
+          wget -q https://github.com/KindleModding/koxtoolchain/releases/latest/download/kindlepw2.tar.gz -O - | tar -xzf - -C ~
+          wget -q https://github.com/KindleModding/koxtoolchain/releases/latest/download/kindlehf.tar.gz -O - | tar -xzf - -C ~
     - uses: actions/checkout@v4
       with:
         submodules: recursive
