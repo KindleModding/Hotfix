@@ -112,7 +112,7 @@ otautils_die()
 	if [ "${BLANKET_IS_UP}" == "true" ] ; then
 		lipc-send-event ${_OTAMODULE} otaSplashError -s "${error_string}"
 	else
-		${FBINK_BIN} -qpm -y -3 "Error: ${error_string}"
+		${FBINK_BIN} -qpmh -y -3 -S 6 "Error: ${error_string}"
 	fi
 	if [ $? -eq 0 ] ; then
 		logmsg "D" "guierror" "" "display error screen: ${error_string}"

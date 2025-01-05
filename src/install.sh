@@ -21,9 +21,13 @@ otautils_update_progressbar
 
 # Make sure we have enough space left (>512KB) in /var/local first...
 logmsg "I" "install" "" "checking amount of free storage space..."
-if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(stat -c %s kmc.tar) + $(stat -c %s mkk.tar)))" ] ; then
+if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1)))" ] ; then
     logmsg "C" "install" "code=1" "not enough space left in varlocal"
+    logmsg "C" "storage_error" "Needed: $(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1)))"
+    logmsg "C" "storage_error" "Available: $(df -k /var/local | tail -n 1 | awk '{ print $4; }')"
     cleanup()
+
+    otautils_die "Not enough space left on device!"
     return 1
 fi
 
@@ -70,7 +74,7 @@ chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/jobs/*"
 
 logmsg "I" "banner" "" ""
 logmsg "I" "banner" "" ""
-logmsg "I" "banner" "" "KAHT INSTALLER (${HOTFIX_VERSION})"
+logmsg "I" "banner" "" "HAKT INSTALLER (${HOTFIX_VERSION})"
 logmsg "I" "banner" "" "Installing on arch=${ARCH}"
 logmsg "I" "banner" "" "Based on NiLuJe's hotfix & hotfix installer"
 logmsg "I" "banner" "" "Created by HackerDude"

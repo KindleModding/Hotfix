@@ -27,4 +27,5 @@ sleep 3 # Wait for it to stop
 /var/local/kmc/bin/fbink -y 4 -m -S 7 "Restarting GUI"
 /var/local/kmc/bin/fbink -y 6 -m -S 7 "Please Wait..."
 /var/local/kmc/bin/fbink -y 17 -p -S 3 "(Kindles are slow lol)  "
-/var/local/kmc/bin/fbink -y -6 -m -S 4 "(Application failed to start error is fine, just keep waiting!)"
+/var/local/kmc/bin/fbink -y -6 -m -S 4 "(The Application Error dialog is fine)"
+/var/local/kmc/bin/fbink -y -5 -m -S 4 "(Just press close and keep waiting!)"
