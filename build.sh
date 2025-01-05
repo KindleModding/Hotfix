@@ -35,10 +35,10 @@ sh ./gen_crosscompile.sh
 meson setup --cross-file kindlepw2.txt builddir_armel
 meson setup --cross-file kindlehf.txt builddir_armhf
 cd builddir_armel
-meson compile
+meson compile -j $(($(getconf _NPROCESSORS_ONLN 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null || echo 0) + 1))
 cd ..
 cd builddir_armhf
-meson compile
+meson compile -j $(($(getconf _NPROCESSORS_ONLN 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null || echo 0) + 1))
 cd ../../
 echo "* Copying sh_integration"
 cp ./sh_integration/builddir_armel/extractor/sh_integration_extractor.so ./src/armel/
@@ -48,13 +48,13 @@ cp ./sh_integration/builddir_armhf/launcher/sh_integration_launcher ./src/armhf/
 
 echo "* Building fbink..."
 cd FBInk
-make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
-make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
+make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi" -j $(($(getconf _NPROCESSORS_ONLN 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null || echo 0) + 1))
+make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi" -j $(($(getconf _NPROCESSORS_ONLN 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null || echo 0) + 1))
 cp ./Release/fbink ../src/armel/
 cp ./Release/libfbink* ../src/armel/libs/
 make clean
-make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
-make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
+make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf" -j $(($(getconf _NPROCESSORS_ONLN 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null || echo 0) + 1))
+make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf" -j $(($(getconf _NPROCESSORS_ONLN 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null || echo 0) + 1))
 cp ./Release/fbink ../src/armhf/
 cp ./Release/libfbink* ../src/armhf/libs/
 cd ..
@@ -121,4 +121,4 @@ echo $DEVICES
 
 echo "* Building hotfix"
 cd ./build_tmp/src
-${KINDLETOOL} create ota2 -d kindle5 -d ${DEVICES} -s min -t max -O -C . "../../build/Update_hotfix_universal.bin"
+${KINDLETOOL} create ota2 -d kindle5 -d ${DEVICES} -d 0xF9D -s min -t max -O -C . "../../build/Update_hotfix_universal.bin"

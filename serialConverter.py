@@ -11,4 +11,4 @@ def devCode(string):
 	return num
 
 # BionicGecko's ColorSoft
-print(hex(devCode("3H7")))
+print(hex(devCode(input("Enter device code:"))).upper())
