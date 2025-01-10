@@ -54,12 +54,16 @@ cd FBInk
 make clean
 make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
 make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
+make input_scan CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
 cp -f ./Release/fbink ../src/kmc/armel/bin/
+cp -f ./Release/input_scan ../src/kmc/armel/bin/
 cp -f ./Release/libfbink* ../src/kmc/armel/lib/
 make clean
 make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
 make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
+make input_scan CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
 cp -f ./Release/fbink ../src/kmc/armhf/bin/
+cp -f ./Release/input_scan ../src/kmc/armel/bin/
 cp -f ./Release/libfbink* ../src/kmc/armhf/lib/
 cd ..
 
