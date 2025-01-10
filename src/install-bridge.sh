@@ -41,6 +41,7 @@ echo '# Name: Run Hotfix' >> /mnt/us/documents/run_bridge.sh
 echo '# Author: HackerDude' >> /mnt/us/documents/run_bridge.sh
 echo '# Icon:' >> /mnt/us/documents/run_bridge.sh
 echo '# DontUseFBInk' >> /mnt/us/documents/run_bridge.sh
+echo '# V1.11.0' >> /mnt/us/documents/run_bridge.sh
 echo 'sh /var/local/mkk/bridge.sh' >> /mnt/us/documents/run_bridge.sh
 echo 'reboot' >> /mnt/us/documents/run_bridge.sh
 
