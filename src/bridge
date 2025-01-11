@@ -27,6 +27,7 @@ IS_KT5="false"
 IS_KS="false"
 IS_PW6="false"
 IS_KT6="false"
+IS_KS2="false"
 IS_CS="false"
 K5_ATLEAST_54="false"
 K5_ATLEAST_512="false"
@@ -99,7 +100,7 @@ find_rootfs()
 	elif [ "${IS_PW4}" == "true" ] || [ "${IS_KT4}" == "true" ] ; then
 		# NOTE: At least this time, rdev agrees with kdb...
 		ROOTPART="mmcblk1p8"
-	elif [ "${IS_PW5}" == "true" ] || [ "${IS_KT5}" == "true" ] || [ "${IS_KS}" == "true" ] || [ "${IS_PW6}" == "true" ] || [ "${IS_KT6}" == "true" ] || [ "${IS_CS}" == "true" ] ; then
+	elif [ "${IS_PW5}" == "true" ] || [ "${IS_KT5}" == "true" ] || [ "${IS_KS}" == "true" ] || [ "${IS_PW6}" == "true" ] || [ "${IS_KT6}" == "true" ] || [ "${IS_KS2}" == "true" ] || [ "${IS_CS}" == "true" ] ; then
 		# NOTE: On Bellatrix & Bellatrix3 & Bellatrix4, kdb & platform_variables also agree...
 		ROOTPART="mmcblk0p8"
 	fi
@@ -217,7 +218,11 @@ check_model()
 				# KT6
 				IS_KT6="true"
 			;;
-			"3H7" )
+			"3V0" | "3V1" | "3X5" | "3UV" | "3X4" | "3X3" | "41E" | "41D" )
+				# KS2
+				IS_KS2="true"
+			;;
+			"3H9" | "3H4" | "3HB" | "3H6" | "3H2" | "34X" | "3H7" | "3JT" | "3J6" | "456" )
 				# CS
 				IS_CS="true"
 			;;
@@ -260,6 +265,11 @@ check_model()
 		EIPS_X_RES=16
 		EIPS_Y_RES=24
 	elif [ "${IS_KS}" == "true" ] ; then
+		SCREEN_X_RES=1860
+		SCREEN_Y_RES=2480
+		EIPS_X_RES=16
+		EIPS_Y_RES=24
+	elif [ "${IS_KS2}" == "true" ] ; then # God I hope this is right
 		SCREEN_X_RES=1860
 		SCREEN_Y_RES=2480
 		EIPS_X_RES=16
@@ -339,17 +349,22 @@ check_version()
 			K5_ATLEAST_512="true"
 		elif [ "${IS_PW6}" == "true" ] ; then
 			# The PW6 shipped on >= 5.17.y ;)
-			logmsg "I" "check_version" "" "KS detected, assuming >= 5.4"
+			logmsg "I" "check_version" "" "PW6 detected, assuming >= 5.4"
 			K5_ATLEAST_54="true"
 			K5_ATLEAST_512="true"
 		elif [ "${IS_KT6}" == "true" ] ; then
 			# The KT6 shipped on >= 5.17.y ;)
-			logmsg "I" "check_version" "" "KS detected, assuming >= 5.4"
+			logmsg "I" "check_version" "" "KT6 detected, assuming >= 5.4"
+			K5_ATLEAST_54="true"
+			K5_ATLEAST_512="true"
+		elif [ "${IS_KS2}" == "true" ] ; then
+			# The KS2 shipped on >= 5.17.y ;)
+			logmsg "I" "check_version" "" "KS2 detected, assuming >= 5.4"
 			K5_ATLEAST_54="true"
 			K5_ATLEAST_512="true"
 		elif [ "${IS_CS}" == "true" ] ; then
 			# The CS shipped on >= 5.18.y ;)
-			logmsg "I" "check_version" "" "KS detected, assuming >= 5.4"
+			logmsg "I" "check_version" "" "CS detected, assuming >= 5.4"
 			K5_ATLEAST_54="true"
 			K5_ATLEAST_512="true"
 		else
