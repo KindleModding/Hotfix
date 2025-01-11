@@ -21,7 +21,7 @@ MKK_BACKUP_STORAGE="/mnt/us/mkk"
 RP_BACKUP_STORAGE="/mnt/us/rp"
 ARCH="armel"
 # Check if the Kindle is ARMHF or ARMEL
-if [ ls /lib | grep -q ld-linux-armhf.so ]; then
+if [ -f /lib/ld-linux-armhf.so.3 ]; then
     ARCH="armhf"
 fi
 
@@ -35,12 +35,6 @@ _FUNCTIONS=/etc/upstart/functions
 # Make sure HACKNAME is set (NOTE: This should be overriden in the update script)
 [ -z "${HACKNAME}" ] && HACKNAME="ota_script"
 
-# Get the Kindle's architecture
-ARCH="armel"
-# Check if the Kindle is ARMHF or ARMEL
-if ls /lib | grep ld-linux-armhf.so; then
-    ARCH="armhf"
-fi
 FBINK_BIN="${KMC_PERSISTENT_STORAGE}/${ARCH}/bin/fbink"
 
 

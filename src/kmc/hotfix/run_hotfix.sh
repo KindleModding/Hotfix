@@ -4,7 +4,7 @@
 
 ARCH="armel"
 # Check if the Kindle is ARMHF or ARMEL
-if [ ls /lib | grep -q ld-linux-armhf.so ]; then
+if [ -f /lib/ld-linux-armhf.so.3 ]; then
     ARCH="armhf"
 fi
 
