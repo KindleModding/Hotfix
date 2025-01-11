@@ -3,4 +3,4 @@
 	url = https://github.com/KindleModding/sh_integration.git
 [submodule "FBInk"]
 	path = FBInk
-	url = https://github.com/NiLuJe/FBInk
+	url = https://github.com/KindleModding/FBInk.git
