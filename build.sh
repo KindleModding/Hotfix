@@ -112,13 +112,13 @@ rvyJnS2MKLG2cczjlQIDAQAB
 EOF
 mksquashfs ./build_tmp/patched_uks ./build_tmp/src/updater_keys.sqsh
 
-echo "* Generating device list"
-DEVICE_LIST="$(${KINDLETOOL} convert -i tmp_build_cache/update_kindle*.bin 2>&1 | grep -o "^Device .*" | grep -o "0x[[:xdigit:]]*" | tr "\n" " ")"
-echo $DEVICE_LIST
+#echo "* Generating device list"
+#DEVICE_LIST="$(${KINDLETOOL} convert -i tmp_build_cache/update_kindle*.bin 2>&1 | grep -o "^Device .*" | grep -o "0x[[:xdigit:]]*" | tr "\n" " ")"
+#echo $DEVICE_LIST
 
-DEVICES="$(echo "$DEVICE_LIST" | xargs | sed "s/ / -d /g") -d 0xE27"
-echo $DEVICES
+#DEVICES="$(echo "$DEVICE_LIST" | xargs | sed "s/ / -d /g") -d 0xE27"
+#echo $DEVICES
 
 echo "* Building hotfix"
 cd ./build_tmp/src
-${KINDLETOOL} create ota2 -d kindle5 -d ${DEVICES} -d 0xF9D -s min -t max -O -C . "../../build/Update_hotfix_universal.bin"
+${KINDLETOOL} create ota2 -d kindle5 -s min -t max -O -C . "../../build/Update_hotfix_universal.bin"
