@@ -6,7 +6,7 @@
 #
 ##
 
-HACKNAME="jb_bridge_1.12.0"
+HACKNAME="jb_bridge_1.12.1"
 
 # Pull libOTAUtils for logging & progress handling
 [ -f ./libotautils5 ] && source ./libotautils5
@@ -36,14 +36,15 @@ make_mutable "/var/local/system/fixup"
 rm -rf "/var/local/system/fixup"
 make_mutable "/var/local/system/onetimefixup"
 rm -rf "/var/local/system/onetimefixup"
-echo '#!/bin/sh' > /mnt/us/documents/run_bridge.sh
-echo '# Name: Run Hotfix' >> /mnt/us/documents/run_bridge.sh
-echo '# Author: HackerDude' >> /mnt/us/documents/run_bridge.sh
-echo '# Icon:' >> /mnt/us/documents/run_bridge.sh
-echo '# DontUseFBInk' >> /mnt/us/documents/run_bridge.sh
-echo '# V1.12.0' >> /mnt/us/documents/run_bridge.sh
-echo 'sh /var/local/mkk/bridge.sh' >> /mnt/us/documents/run_bridge.sh
-echo 'reboot' >> /mnt/us/documents/run_bridge.sh
+echo '#!/bin/sh' > /tmp/run_bridge.sh
+echo '# Name: Run Hotfix' >> /tmp/run_bridge.sh
+echo '# Author: HackerDude' >> /tmp/run_bridge.sh
+echo '# Icon:' >> /tmp/run_bridge.sh
+echo '# DontUseFBInk' >> /tmp/run_bridge.sh
+echo '# V1.12.1' >> /tmp/run_bridge.sh
+echo 'sh /var/local/mkk/bridge.sh' >> /tmp/run_bridge.sh
+echo 'reboot' >> /tmp/run_bridge.sh
+cp -f /tmp/run_bridge.sh /mnt/us/documents/
 
 otautils_update_progressbar
 
