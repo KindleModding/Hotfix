@@ -8,6 +8,8 @@
 #   exit 1
 #fi
 
+set -e
+
 # Try sudo
 sudo echo
 
@@ -27,45 +29,71 @@ mkdir -p ./build ./build_tmp ./build_cache
 # Build native stuff
 ###
 echo "* Building natives"
+rm -rf ./src/kmc/armel/lib/
+rm -rf ./src/kmc/armhf/lib/
+rm -rf ./src/kmc/armel/bin/
+rm -rf ./src/kmc/armhf/bin/
+rm -rf ./src/kmrp/armel
+rm -rf ./src/kmrp/armhf
+
 mkdir -p ./src/kmc/armel/lib/
 mkdir -p ./src/kmc/armhf/lib/
 mkdir -p ./src/kmc/armel/bin/
 mkdir -p ./src/kmc/armhf/bin/
+mkdir -p ./src/kmrp/armel
+mkdir -p ./src/kmrp/armhf
+
+echo "* Building KMRP..."
+pushd kindle_modding_recovery_project
+   sh ./gen_crosscompile.sh
+   meson setup --cross-file kindlepw2.txt builddir_armel
+   meson setup --cross-file kindlehf.txt builddir_armhf
+   meson compile -C builddir_armel
+   meson compile -C builddir_armhf
+popd
+echo "* Copying KMRP"
+for ARCH in armel armhf
+do
+   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/src/kmrp" "./src/kmrp/${ARCH}/"
+   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/subprojects/fbink/libfbink_input.so" "./src/kmrp/${ARCH}/"
+   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/subprojects/libevdev/libevdev.so.2.3.0" "./src/kmrp/${ARCH}/libevdev.so.2.3.0"
+   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/subprojects/libevdev/libevdev.so.2.3.0" "./src/kmrp/${ARCH}/libevdev.so.2"
+   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/subprojects/libevdev/libevdev.so.2.3.0" "./src/kmrp/${ARCH}/libevdev.so"
+done
 
 echo "* Building sh_integration..."
-cd sh_integration
-sh ./gen_crosscompile.sh
-meson setup --cross-file kindlepw2.txt builddir_armel
-meson setup --cross-file kindlehf.txt builddir_armhf
-cd builddir_armel
-meson compile
-cd ..
-cd builddir_armhf
-meson compile
-cd ../../
+pushd sh_integration
+   sh ./gen_crosscompile.sh
+   meson setup --cross-file kindlepw2.txt builddir_armel
+   meson setup --cross-file kindlehf.txt builddir_armhf
+   meson compile -C builddir_armel
+   meson compile -C builddir_armhf
+popd
 echo "* Copying sh_integration"
-cp -f ./sh_integration/builddir_armel/extractor/sh_integration_extractor.so ./src/kmc/armel/lib/
-cp -f ./sh_integration/builddir_armel/launcher/sh_integration_launcher ./src/kmc/armel/bin/
-cp -f ./sh_integration/builddir_armhf/extractor/sh_integration_extractor.so ./src/kmc/armhf/lib/
-cp -f ./sh_integration/builddir_armhf/launcher/sh_integration_launcher ./src/kmc/armhf/bin/
+for ARCH in armel armhf
+do
+   cp -f "./sh_integration/builddir_${ARCH}/extractor/sh_integration_extractor.so" "./src/kmc/${ARCH}/lib/"
+   cp -f "./sh_integration/builddir_${ARCH}/launcher/sh_integration_launcher" "./src/kmc/${ARCH}/bin/"
+done
 
 echo "* Building fbink..."
-cd FBInk
-make clean
-make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
-make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
-make input_scan CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
-cp -f ./Release/fbink ../src/kmc/armel/bin/
-cp -f ./Release/input_scan ../src/kmc/armel/bin/
-cp -f ./Release/libfbink* ../src/kmc/armel/lib/
-make clean
-make release KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
-make strip KINDLE=1 DRAW=1 BITMAP=1 FONTS=1 IMAGE=1 OPENTYPE=1 INPUT=1 CROSS_TC="$HOME/x-tools/arm-kindlehf-linux-gnueabihf/bin/arm-kindlehf-linux-gnueabihf"
-make input_scan CROSS_TC="$HOME/x-tools/arm-kindlepw2-linux-gnueabi/bin/arm-kindlepw2-linux-gnueabi"
-cp -f ./Release/fbink ../src/kmc/armhf/bin/
-cp -f ./Release/input_scan ../src/kmc/armel/bin/
-cp -f ./Release/libfbink* ../src/kmc/armhf/lib/
-cd ..
+cp -rf ./utils/fbink_patch/* ./FBInk/
+pushd FBInk
+   sh ./gen_crosscompile.sh
+   meson setup --cross-file kindlepw2.txt builddir_armel -Dtarget=Kindle -Dbitmap=enabled -Ddraw=enabled -Dfonts=enabled -Dimage=enabled -Dinputlib=enabled -Dopentype=enabled -Dfbink=enabled -Dinput_scan=enabled -Dfbdepth=enabled
+   meson setup --cross-file kindlehf.txt builddir_armhf -Dtarget=Kindle -Dbitmap=enabled -Ddraw=enabled -Dfonts=enabled -Dimage=enabled -Dinputlib=enabled -Dopentype=enabled -Dfbink=enabled -Dinput_scan=enabled -Dfbdepth=enabled
+   meson compile -C builddir_armel
+   meson compile -C builddir_armhf
+popd
+echo "* Copying FBInk"
+for ARCH in armel armhf
+do
+   cp -f "./FBInk/builddir_${ARCH}/libfbink_input.so" "./src/kmc/${ARCH}/lib/"
+   cp -f "./FBInk/builddir_${ARCH}/libfbink.so" "./src/kmc/${ARCH}/lib/"
+   cp -f "./FBInk/builddir_${ARCH}/input_scan" "./src/kmc/${ARCH}/bin/"
+   cp -f "./FBInk/builddir_${ARCH}/fbink" "./src/kmc/${ARCH}/bin/"
+   cp -f "./FBInk/builddir_${ARCH}/fbdepth" "./src/kmc/${ARCH}/bin/"
+done
 
 ###
 # Generate the updater_keys.sqsh file
@@ -74,26 +102,12 @@ cd ..
 echo "* Copying source to build dir"
 cp -r ./src ./build_tmp/src
 
-##echo "* Downloading official firmware from Amazon (Scribe)"
-##if [ ! -f ./build_cache/update_kindle_scribe.bin ]; then
-##   wget https://www.amazon.com/update_Kindle_Scribe -q -O ./build_cache/update_kindle_scribe.bin
-##else
-##   echo "* Official firmware found in cache - SKIPPING"
-##fi
-##
 echo "* Downloading official firmware from Amazon (PW6)"
 if [ ! -f ./build_cache/update_kindle_pw6.bin ]; then
    wget https://www.amazon.com/update_KindlePaperwhite_12th_Gen_2024 -q -O ./build_cache/update_kindle_pw6.bin
 else
    echo "* Official firmware found in cache - SKIPPING"
 fi
-##
-##echo "* Downloading official firmware from Amazon (PW5)"
-##if [ ! -f ./build_cache/update_kindle_pw5.bin ]; then
-##   wget https://www.amazon.com/update_Kindle_Paperwhite_11th_Gen -q -O ./build_cache/update_kindle_pw5.bin
-##else
-##   echo "* Official firmware found in cache - SKIPPING"
-##fi
 
 cp -r build_cache tmp_build_cache
 

@@ -1,0 +1,15 @@
+option('target', type: 'combo', choices: ['Kindle', 'Kobo', 'Linux', 'reMarkable'], value: 'Linux')
+
+# Features.
+option('bitmap'     , type: 'feature')
+option('button-scan', type: 'feature')
+option('draw'       , type: 'feature')
+option('fonts'      , type: 'feature')
+option('image'      , type: 'feature')
+option('inputlib'   , type: 'feature')
+option('opentype'   , type: 'feature')
+
+# Programs.
+option('input_scan', type: 'feature')
+option('fbdepth', type: 'feature')
+option('fbink'  , type: 'feature')

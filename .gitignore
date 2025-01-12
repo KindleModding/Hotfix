@@ -4,6 +4,8 @@
 /tmp_build_cache
 /src/kmc/*/bin/*
 /src/kmc/*/lib/*
+/src/kmrp/armel
+/src/kmrp/armhf
 
 # We don't build gandalf ourselves at this time
 !/src/kmc/*/bin/gandalf
