@@ -6,7 +6,7 @@
 #
 ##
 
-HACKNAME="jb_bridge_1.12.1"
+HACKNAME="jb_bridge_1.13.0"
 
 # Pull libOTAUtils for logging & progress handling
 [ -f ./libotautils5 ] && source ./libotautils5
@@ -41,7 +41,7 @@ echo '# Name: Run Hotfix' >> /tmp/run_bridge.sh
 echo '# Author: HackerDude' >> /tmp/run_bridge.sh
 echo '# Icon:' >> /tmp/run_bridge.sh
 echo '# DontUseFBInk' >> /tmp/run_bridge.sh
-echo '# V1.12.1' >> /tmp/run_bridge.sh
+echo '# V1.13.0' >> /tmp/run_bridge.sh
 echo 'sh /var/local/mkk/bridge.sh' >> /tmp/run_bridge.sh
 echo 'reboot' >> /tmp/run_bridge.sh
 cp -f /tmp/run_bridge.sh /mnt/us/documents/
