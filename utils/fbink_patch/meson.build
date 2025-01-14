@@ -196,6 +196,7 @@ summary(
     'Tools'        : ', '.join(
       fbdepth_opt.allowed() ? 'fbdepth' : [],
       fbink_opt.allowed() ? 'fbink' : [],
+      fbink_input_scan_opt.allowed() ? 'input_scan' : [],
     ),
   },
   bool_yn: true,
