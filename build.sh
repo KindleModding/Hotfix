@@ -45,9 +45,8 @@ mkdir -p ./src/kmrp/armhf
 
 echo "* Building KMRP..."
 pushd kindle_modding_recovery_project
-   sh ./gen_crosscompile.sh
-   meson setup --cross-file kindlepw2.txt builddir_armel
-   meson setup --cross-file kindlehf.txt builddir_armhf
+   meson setup --cross-file ~/x-tools/arm-kindlepw2-linux-gnueabi/meson-crosscompile.txt builddir_armel
+   meson setup --cross-file ~/x-tools/arm-kindlehf-linux-gnueabihf/meson-crosscompile.txt builddir_armhf
    meson compile -C builddir_armel
    meson compile -C builddir_armhf
 popd
@@ -63,9 +62,8 @@ done
 
 echo "* Building sh_integration..."
 pushd sh_integration
-   sh ./gen_crosscompile.sh
-   meson setup --cross-file kindlepw2.txt builddir_armel
-   meson setup --cross-file kindlehf.txt builddir_armhf
+   meson setup --cross-file ~/x-tools/arm-kindlepw2-linux-gnueabi/meson-crosscompile.txt builddir_armel
+   meson setup --cross-file ~/x-tools/arm-kindlehf-linux-gnueabihf/meson-crosscompile.txt builddir_armhf
    meson compile -C builddir_armel
    meson compile -C builddir_armhf
 popd
@@ -79,9 +77,8 @@ done
 echo "* Building fbink..."
 cp -rf ./utils/fbink_patch/* ./FBInk/
 pushd FBInk
-   sh ./gen_crosscompile.sh
-   meson setup --cross-file kindlepw2.txt builddir_armel -Dtarget=Kindle -Dbitmap=enabled -Ddraw=enabled -Dfonts=enabled -Dimage=enabled -Dinputlib=enabled -Dopentype=enabled -Dfbink=enabled -Dinput_scan=enabled -Dfbdepth=enabled
-   meson setup --cross-file kindlehf.txt builddir_armhf -Dtarget=Kindle -Dbitmap=enabled -Ddraw=enabled -Dfonts=enabled -Dimage=enabled -Dinputlib=enabled -Dopentype=enabled -Dfbink=enabled -Dinput_scan=enabled -Dfbdepth=enabled
+   meson setup --cross-file ~/x-tools/arm-kindlepw2-linux-gnueabi/meson-crosscompile.txt builddir_armel -Dtarget=Kindle -Dbitmap=enabled -Ddraw=enabled -Dfonts=enabled -Dimage=enabled -Dinputlib=enabled -Dopentype=enabled -Dfbink=enabled -Dinput_scan=enabled -Dfbdepth=enabled
+   meson setup --cross-file ~/x-tools/arm-kindlehf-linux-gnueabihf/meson-crosscompile.txt builddir_armhf -Dtarget=Kindle -Dbitmap=enabled -Ddraw=enabled -Dfonts=enabled -Dimage=enabled -Dinputlib=enabled -Dopentype=enabled -Dfbink=enabled -Dinput_scan=enabled -Dfbdepth=enabled
    meson compile -C builddir_armel
    meson compile -C builddir_armhf
 popd
