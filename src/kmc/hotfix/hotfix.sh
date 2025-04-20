@@ -6,11 +6,11 @@ source /etc/upstart/functions
 source /var/local/kmc/hotfix/libhotfixutils
 LOG_DOMAIN="jb_hotfix"
 
-if [ ! -f "/tmp/run_hotfix" ] || [ $(date +%s) -gt $(($(cat /tmp/run_hotfix) + 30)) ]; then
-    date +%s > /tmp/run_hotfix
-    ${FBINK_BIN} -y 1 -S 4 "Select scriptlet again to confirm running hotfix"
-    exit 0
-fi
+#if [ ! -f "/tmp/run_hotfix" ] || [ $(date +%s) -gt $(($(cat /tmp/run_hotfix) + 30)) ]; then
+#    date +%s > /tmp/run_hotfix
+#    ${FBINK_BIN} -y 1 -S 3 "CONFIRM?"
+#    exit 0
+#fi
 
 # Here we go...
 logmsg "I" "hotfix" "" "Running Universal Hotfix (${HOTFIX_VERSION})"

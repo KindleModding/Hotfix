@@ -3,7 +3,6 @@
 # Based on libotautils5 from NiLuJe
 # Written by HackerDude
 #
-# (The 5 meant K5 not version 5 didn't it...)
 # Notable Changes
 # - Use an enum for models
 # - Remove dependency on eips (being deprecated in favour for eips_v2, might as well use fbink in case it happens again)
