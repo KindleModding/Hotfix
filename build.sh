@@ -117,9 +117,16 @@ sudo mount -o loop ./build_tmp/official_firmware/*rootfs*.img ./build_tmp/offici
 echo "* Patching UKS SQSH"
 mkdir ./build_tmp/patched_uks
 mkdir ./build_tmp/mounted_sqsh
-sudo mount -o loop ./build_tmp/official_firmware_mnt/etc/uks.sqsh ./build_tmp/mounted_sqsh
+if [ -e  ./build_tmp/official_firmware_mnt/etc/uks.sqsh ]; then
+   sudo mount -o loop ./build_tmp/official_firmware_mnt/etc/uks.sqsh ./build_tmp/mounted_sqsh
+else
+   sudo cp -r ./build_tmp/official_firmware_mnt/etc/uks/* ./build_tmp/mounted_sqsh/
+fi
+
 cp ./build_tmp/mounted_sqsh/* ./build_tmp/patched_uks/
-sudo umount ./build_tmp/mounted_sqsh
+if [ -e  ./build_tmp/official_firmware_mnt/etc/uks.sqsh ]; then
+   sudo umount ./build_tmp/mounted_sqsh
+fi
 sudo umount ./build_tmp/official_firmware_mnt/
 cat > "./build_tmp/patched_uks/pubdevkey01.pem" << EOF
 -----BEGIN PUBLIC KEY-----
