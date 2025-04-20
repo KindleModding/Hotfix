@@ -78,6 +78,7 @@ logmsg "I" "banner" "" "HAKT INSTALLER (${HOTFIX_VERSION})"
 logmsg "I" "banner" "" "Installing on arch=${ARCH}"
 logmsg "I" "banner" "" "Based on NiLuJe's hotfix & hotfix installer"
 logmsg "I" "banner" "" "Created by HackerDude"
+logmsg "I" "banner" "" "Special thanks to martysh & ThatOnePerson for beta testing this!"
 logmsg "I" "banner" "" ""
 logmsg "I" "banner" "" ""
 
