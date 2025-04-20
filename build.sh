@@ -29,6 +29,10 @@ mkdir -p ./build ./build_tmp ./build_cache
 # Build native stuff
 ###
 echo "* Building natives"
+mkdir -p ./src/kmc/armel/lib/
+mkdir -p ./src/kmc/armhf/lib/
+mkdir -p ./src/kmc/armel/bin/
+mkdir -p ./src/kmc/armhf/bin/
 
 echo "* Building sh_integration..."
 cd sh_integration
