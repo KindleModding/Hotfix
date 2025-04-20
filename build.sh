@@ -33,32 +33,11 @@ rm -rf ./src/kmc/armel/lib/
 rm -rf ./src/kmc/armhf/lib/
 rm -rf ./src/kmc/armel/bin/
 rm -rf ./src/kmc/armhf/bin/
-rm -rf ./src/kmrp/armel
-rm -rf ./src/kmrp/armhf
 
 mkdir -p ./src/kmc/armel/lib/
 mkdir -p ./src/kmc/armhf/lib/
 mkdir -p ./src/kmc/armel/bin/
 mkdir -p ./src/kmc/armhf/bin/
-mkdir -p ./src/kmrp/armel
-mkdir -p ./src/kmrp/armhf
-
-echo "* Building KMRP..."
-pushd kindle_modding_recovery_project
-   meson setup --cross-file ~/x-tools/arm-kindlepw2-linux-gnueabi/meson-crosscompile.txt builddir_armel
-   meson setup --cross-file ~/x-tools/arm-kindlehf-linux-gnueabihf/meson-crosscompile.txt builddir_armhf
-   meson compile -C builddir_armel
-   meson compile -C builddir_armhf
-popd
-echo "* Copying KMRP"
-for ARCH in armel armhf
-do
-   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/src/kmrp" "./src/kmrp/${ARCH}/"
-   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/subprojects/fbink/libfbink_input.so" "./src/kmrp/${ARCH}/"
-   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/subprojects/libevdev/libevdev.so.2.3.0" "./src/kmrp/${ARCH}/libevdev.so.2.3.0"
-   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/subprojects/libevdev/libevdev.so.2.3.0" "./src/kmrp/${ARCH}/libevdev.so.2"
-   cp -f "./kindle_modding_recovery_project/builddir_${ARCH}/subprojects/libevdev/libevdev.so.2.3.0" "./src/kmrp/${ARCH}/libevdev.so"
-done
 
 echo "* Building sh_integration..."
 pushd sh_integration
