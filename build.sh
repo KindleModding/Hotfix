@@ -40,12 +40,12 @@ mkdir -p ./src/kmc/armel/bin/
 mkdir -p ./src/kmc/armhf/bin/
 
 echo "* Building sh_integration..."
-pushd sh_integration
+cd sh_integration
    meson setup --cross-file ~/x-tools/arm-kindlepw2-linux-gnueabi/meson-crosscompile.txt builddir_armel
    meson setup --cross-file ~/x-tools/arm-kindlehf-linux-gnueabihf/meson-crosscompile.txt builddir_armhf
    meson compile -C builddir_armel
    meson compile -C builddir_armhf
-popd
+cd ..
 echo "* Copying sh_integration"
 for ARCH in armel armhf
 do
@@ -55,12 +55,12 @@ done
 
 echo "* Building fbink..."
 cp -rf ./utils/fbink_patch/* ./FBInk/
-pushd FBInk
+cd FBInk
    meson setup --cross-file ~/x-tools/arm-kindlepw2-linux-gnueabi/meson-crosscompile.txt builddir_armel -Dtarget=Kindle -Dbitmap=enabled -Ddraw=enabled -Dfonts=enabled -Dimage=enabled -Dinputlib=enabled -Dopentype=enabled -Dfbink=enabled -Dinput_scan=enabled -Dfbdepth=enabled
    meson setup --cross-file ~/x-tools/arm-kindlehf-linux-gnueabihf/meson-crosscompile.txt builddir_armhf -Dtarget=Kindle -Dbitmap=enabled -Ddraw=enabled -Dfonts=enabled -Dimage=enabled -Dinputlib=enabled -Dopentype=enabled -Dfbink=enabled -Dinput_scan=enabled -Dfbdepth=enabled
    meson compile -C builddir_armel
    meson compile -C builddir_armhf
-popd
+cd ..
 echo "* Copying FBInk"
 for ARCH in armel armhf
 do
