@@ -33,9 +33,9 @@ if [ -d "/var/local/mkk" ]; then
 fi
 
 # Make sure we have enough space in /var/local to unpack our KMC and MKK tars
-if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1) - $STORAGE_FREEISH))" ] ; then
+if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1) - $STORAGE_FREEABLE))" ] ; then
     logmsg "C" "install" "code=1" "not enough space left in varlocal"
-    logmsg "C" "storage_error" "Needed: $(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1)))"
+    logmsg "C" "storage_error" "Needed: $(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1) - $STORAGE_FREEABLE))"
     logmsg "C" "storage_error" "Available: $(df -k /var/local | tail -n 1 | awk '{ print $4; }')"
     cleanup()
 
