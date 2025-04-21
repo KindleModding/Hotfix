@@ -64,9 +64,9 @@ tar -xf kmc.tar -C "${KMC_PERSISTENT_STORAGE}"
 ###
 otautils_update_progressbar
 logmsg "I" "install" "" "Fixing KMC permissions"
-chmod 0664 "${KMC_PERSISTENT_STORAGE}/hotfix/kmc.conf"
 chmod -R a+rx "${KMC_PERSISTENT_STORAGE}"/armel/*
 chmod -R a+rx "${KMC_PERSISTENT_STORAGE}"/armhf/*
+chmod 0664 "${KMC_PERSISTENT_STORAGE}/hotfix/kmc.conf"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/hotfix.sh"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/run_hotfix.sh"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/libhotfixutils"
