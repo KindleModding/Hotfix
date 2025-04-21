@@ -207,7 +207,7 @@ is_integer()
 # The amount of steps needed to fill the progress bar
 # I'm lazy, so just count the amount of calls in the script itself ;)
 # NOTE: Yup, $0 still points to the original script that sourced us :).
-[ -z ${STEPCOUNT} ] && STEPCOUNT="$(grep -c '^[[:blank:]]*otautils_update_progressbar$' ${0} 2>/dev/null)"
+[ -z ${STEPCOUNT} ] && STEPCOUNT="$(grep -c '^[[:blank:]]*otautils_update_progressbar$' ${0} 2>/dev/null)" || true
 # Make sure it's sane...
 is_integer "${STEPCOUNT}" || STEPCOUNT=1
 # NOTE: If you need to for some strange reason, this can be overriden in the update script
