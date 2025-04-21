@@ -4,6 +4,8 @@ KMC_PERSISTENT_STORAGE="/var/local/kmc"
 # Fix permissions for KMC (MKK doesn't need this)
 ###
 logmsg "I" "install" "" "Fixing KMC permissions"
+make_mutable "${KMC_PERSISTENT_STORAGE}/armel/bin/gandalf"
+make_mutable "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
 chmod -R a+rx "${KMC_PERSISTENT_STORAGE}"/armel/*
 chmod -R a+rx "${KMC_PERSISTENT_STORAGE}"/armhf/*
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/hotfix/hotfix.sh"
@@ -20,6 +22,8 @@ chmod +s "${KMC_PERSISTENT_STORAGE}/armel/bin/gandalf"
 chown root:root "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
 chmod a+rx "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
 chmod +s "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
+make_immutable "${KMC_PERSISTENT_STORAGE}/armel/bin/gandalf"
+make_immutable "${KMC_PERSISTENT_STORAGE}/armhf/bin/gandalf"
 
 logmsg "I" "install" "" "Installing KMC binaries for ${ARCH}"
 rm -rf "${KMC_PERSISTENT_STORAGE}/lib"
