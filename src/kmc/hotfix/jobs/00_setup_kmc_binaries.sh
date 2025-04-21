@@ -1,5 +1,3 @@
-KMC_PERSISTENT_STORAGE="/var/local/kmc"
-
 ###
 # Fix permissions for KMC (MKK doesn't need this)
 ###

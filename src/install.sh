@@ -19,9 +19,21 @@ logmsg "I" "hakt_installer" "" "Installing Hotfix (previously bridge)."
 ###
 otautils_update_progressbar
 
-# Make sure we have enough space left (>512KB) in /var/local first...
+
 logmsg "I" "install" "" "checking amount of free storage space..."
-if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1)))" ] ; then
+
+# We track how much storage the currently installed hotfix takes (since we're gonna delete it, it shouldn't count)
+STORAGE_FREEABLE=$((0))
+
+if [ -d "/var/local/kmc" ]; then
+    STORAGE_FREEABLE=$(($STORAGE_FREEABLE + $(df -k /var/local/kmc | tail -n 1 | awk '{ print $4; }')))
+fi
+if [ -d "/var/local/mkk" ]; then
+    STORAGE_FREEABLE=$(($STORAGE_FREEABLE + $(df -k /var/local/mkk | tail -n 1 | awk '{ print $4; }')))
+fi
+
+# Make sure we have enough space in /var/local to unpack our KMC and MKK tars
+if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1) - $STORAGE_FREEISH))" ] ; then
     logmsg "C" "install" "code=1" "not enough space left in varlocal"
     logmsg "C" "storage_error" "Needed: $(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1)))"
     logmsg "C" "storage_error" "Available: $(df -k /var/local | tail -n 1 | awk '{ print $4; }')"
@@ -35,7 +47,6 @@ fi
 ###
 # Setup persistent storage folders in /var/local
 ###
-KMC_PERSISTENT_STORAGE="/var/local/kmc"
 otautils_update_progressbar
 logmsg "I" "install" "" "Initialising persistent storages..."
 make_mutable "${KMC_PERSISTENT_STORAGE}"
