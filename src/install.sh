@@ -35,6 +35,7 @@ fi
 ###
 # Setup persistent storage folders in /var/local
 ###
+KMC_PERSISTENT_STORAGE="/var/local/kmc"
 otautils_update_progressbar
 logmsg "I" "install" "" "Initialising persistent storages..."
 make_mutable "${KMC_PERSISTENT_STORAGE}"
