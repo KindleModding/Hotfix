@@ -26,17 +26,17 @@ logmsg "I" "install" "" "checking amount of free storage space..."
 STORAGE_FREEABLE=$((0))
 
 if [ -d "/var/local/kmc" ]; then
-    STORAGE_FREEABLE=$(($STORAGE_FREEABLE + $(df -k /var/local/kmc | tail -n 1 | awk '{ print $4; }')))
+    STORAGE_FREEABLE=$(($STORAGE_FREEABLE + $(df -k /var/local/kmc | tail -n 1 | tr -s ' ' | cut -d' ' -f4)))
 fi
 if [ -d "/var/local/mkk" ]; then
-    STORAGE_FREEABLE=$(($STORAGE_FREEABLE + $(df -k /var/local/mkk | tail -n 1 | awk '{ print $4; }')))
+    STORAGE_FREEABLE=$(($STORAGE_FREEABLE + $(df -k /var/local/mkk | tail -n 1 | tr -s ' ' | cut -d' ' -f4)))
 fi
 
 # Make sure we have enough space in /var/local to unpack our KMC and MKK tars
-if [ "$(df -k /var/local | tail -n 1 | awk '{ print $4; }')" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1) - $STORAGE_FREEABLE))" ] ; then
+if [ "$(df -k /var/local | tail -n 1 | tr -s ' ' | cut -d' ' -f4)" -lt "$(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1) - $STORAGE_FREEABLE))" ] ; then
     logmsg "C" "install" "code=1" "not enough space left in varlocal"
     logmsg "C" "storage_error" "Needed: $(($(du kmc.tar | cut -f1) + $(du mkk.tar | cut -f1) - $STORAGE_FREEABLE))"
-    logmsg "C" "storage_error" "Available: $(df -k /var/local | tail -n 1 | awk '{ print $4; }')"
+    logmsg "C" "storage_error" "Available: $(df -k /var/local | tail -n 1 | tr -s ' ' | cut -d' ' -f4)"
     cleanup()
 
     otautils_die "Not enough space left on device!"

@@ -22,7 +22,7 @@ if [ -f /lib/ld-linux-armhf.so.3 ]; then
     ARCH="armhf"
 fi
 FBINK_BIN="${KMC_PERSISTENT_STORAGE}/${ARCH}/bin/fbink"
-ROOTPART="$(rdev | awk '{ print $1; }')" # Hotfix is ran as a booklet, we are ALWAYS running from main
+ROOTPART="$(rdev | cut -d' ' -f1)" # Hotfix is ran as a booklet, we are ALWAYS running from main
 
 ###
 # General helpers
