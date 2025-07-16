@@ -58,8 +58,8 @@ jobs:
     - name: "Setup kindle-sdk"
       run: |
           sudo apt-get install -y zlib1g-dev libarchive-dev nettle-dev curl
-          sh ./kindle-sdk/gen-sdk.sh kindlepw2
-          sh ./kindle-sdk/gen-sdk.sh kindlehf
+          bash ./kindle-sdk/gen-sdk.sh kindlepw2
+          bash ./kindle-sdk/gen-sdk.sh kindlehf
     - name: Cache Kindle firmware
       id: build-cache
       uses: actions/cache@v4

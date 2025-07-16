@@ -42,7 +42,7 @@ if [ ! -f "/etc/uks.sqsh" ] ; then
 		install_touch_update_key
 	else
 		# Jailbreak key found... Check it.
-		if [ "$(md5sum "/etc/uks/pubdevkey01.pem" | awk '{ print $1; }')" != "7130ce39bb3596c5067cabb377c7a9ed" ] ; then
+		if [ "$(md5sum "/etc/uks/pubdevkey01.pem" | cut -d' ' -f1)" != "7130ce39bb3596c5067cabb377c7a9ed" ] ; then
 			# Unknown (?!) jailbreak key, install it
 			install_touch_update_key
 		fi
@@ -56,7 +56,7 @@ fi
 # Check if we need to do something with the OTA keystore
 if [ -f "/etc/uks.sqsh" ] && [ -f "${MKK_PERSISTENT_STORAGE}/updater_keys.sqsh" ] ; then
 	# Check it.
-	if [ "$(md5sum "/etc/uks.sqsh" | awk '{ print $1; }')" != "17b5ca595e70ffeee1424ed5e7f09c47" ] ; then
+	if [ "$(md5sum "/etc/uks.sqsh" | cut -d' ' -f1)" != "17b5ca595e70ffeee1424ed5e7f09c47" ] ; then
 		# Unknown (?!) jailbreak keystore, install it
 		install_touch_update_key_squash
 	fi
