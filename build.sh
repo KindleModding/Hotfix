@@ -13,7 +13,7 @@ set -e
 # Try sudo
 sudo echo
 
-export HAKT_VERSION="v2.2.2"
+export HAKT_VERSION="v2.2.3"
 export KT_WITH_UNKNOWN_DEVCODES="1"
 
 # Fall back to the bundled KindleTool if there aren't any in PATH
