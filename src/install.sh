@@ -153,6 +153,11 @@ cp -f "${MKK_PERSISTENT_STORAGE}/dispatch.sh" "/usr/bin/logThis.sh"
 chmod 0755 "/usr/bin/logThis.sh"
 make_immutable "/usr/bin/logThis.sh"
 
+logmsg "I" "install_dispatch" "" "Fixing KMCLog script permissions"
+make_mutable "/var/local/kmc/KMCLog.sh"
+chmod 0755 "/var/local/kmc/KMCLog.sh"
+make_immutable "/var/local/kmc/KMCLog.sh"
+
 otautils_update_progressbar
 
 logmsg "I" "install" "" "Installing the hotfix booklet"

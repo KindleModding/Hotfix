@@ -42,5 +42,9 @@ echo "====================" >> "$LOG_PATH"
 cp /var/log/messages /mnt/us/documents/kmc_log/var_log_messages
 dmesg >> /mnt/us/documents/kmc_log/dmesg
 
+cp /var/local/appreg.db /mnt/us/documents/kmc_log/
+cp /var/local/cc.db /mnt/us/documents/kmc_log/
+cp /var/local/deviceType.txt /mnt/us/documents/kmc_log/
+
 tar czf /mnt/us/documents/kmc_log.tar.gz /mnt/us/documents/kmc_log
 rm -rf /mnt/us/documents/kmc_log
