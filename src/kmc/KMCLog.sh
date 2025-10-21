@@ -4,7 +4,7 @@
 # I'm tired of useless logs
 ###
 
-LOG_PATH="/mnt/us/documents/kmc.log"
+LOG_PATH="/mnt/us/documents/kmc_log.txt"
 
 echo "====================" > "$LOG_PATH"
 echo "=   START KMC LOG  =" >> "$LOG_PATH"
