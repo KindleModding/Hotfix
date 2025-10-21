@@ -4,7 +4,10 @@
 # I'm tired of useless logs
 ###
 
-LOG_PATH="/mnt/us/documents/kmc_log.txt"
+rm -rf /mnt/us/documents/kmc_log
+mkdir /mnt/us/documents/kmc_log
+cp -r /var/local/log /mnt/us/documents/kmc_log
+LOG_PATH="/mnt/us/documents/kmc_log/kmc_log.txt"
 
 echo "====================" > "$LOG_PATH"
 echo "=   START KMC LOG  =" >> "$LOG_PATH"
@@ -34,13 +37,6 @@ find /var/local/mkk -exec md5sum {} \; >> "$LOG_PATH"
 echo >> "$LOG_PATH"
 echo >> "$LOG_PATH"
 echo >> "$LOG_PATH"
-echo "===> /var/log/messages" >> "$LOG_PATH"
-cat /var/log/messages >> "$LOG_PATH"
-
-
-echo >> "$LOG_PATH"
-echo >> "$LOG_PATH"
-echo >> "$LOG_PATH"
 echo "===> dmesg" >> "$LOG_PATH"
 dmesg >> "$LOG_PATH"
 
@@ -48,3 +44,6 @@ echo "====================" >> "$LOG_PATH"
 echo "=    THANK YOU.    =" >> "$LOG_PATH"
 echo "=   END KMC LOG  =" >> "$LOG_PATH"
 echo "====================" >> "$LOG_PATH"
+
+tar czf /mnt/us/documents/kmc_log.tar.gz /mnt/us/documents/kmc_log
+rm -rf /mnt/us/documents/kmc_log
