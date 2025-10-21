@@ -34,16 +34,13 @@ echo >> "$LOG_PATH"
 echo "===> /var/local/mkk contents" >> "$LOG_PATH"
 find /var/local/mkk -exec md5sum {} \; >> "$LOG_PATH"
 
-echo >> "$LOG_PATH"
-echo >> "$LOG_PATH"
-echo >> "$LOG_PATH"
-echo "===> dmesg" >> "$LOG_PATH"
-dmesg >> "$LOG_PATH"
-
 echo "====================" >> "$LOG_PATH"
 echo "=    THANK YOU.    =" >> "$LOG_PATH"
 echo "=   END KMC LOG  =" >> "$LOG_PATH"
 echo "====================" >> "$LOG_PATH"
+
+cp /var/log/messages /mnt/us/documents/kmc_log/var_log_messages
+dmesg >> /mnt/us/documents/kmc_log/dmesg
 
 tar czf /mnt/us/documents/kmc_log.tar.gz /mnt/us/documents/kmc_log
 rm -rf /mnt/us/documents/kmc_log
