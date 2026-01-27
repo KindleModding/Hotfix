@@ -16,7 +16,7 @@ sudo echo
 export HAKT_VERSION="v2.3.3"
 export KT_WITH_UNKNOWN_DEVCODES="1"
 
-# Fall back to the bundled KindleTool if there aren't any in PATH
+# @TODO: This is stupid -HD
 KINDLETOOL="${PWD}/utils/kindletool"
 
 ###
