@@ -12,7 +12,7 @@ LOG_PATH="/mnt/us/documents/kmc_log/kmc_log.txt"
 echo "====================" > "$LOG_PATH"
 echo "=   START KMC LOG  =" >> "$LOG_PATH"
 echo "====================" >> "$LOG_PATH"
-echo "Running Hotfix v2.3.4" >> "$LOG_PATH"
+echo "Running Hotfix 2.3.5" >> "$LOG_PATH"
 
 # Dump the file list
 echo >> "$LOG_PATH"

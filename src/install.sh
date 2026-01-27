@@ -10,9 +10,9 @@ cleanup()
     rm -f libotautils6
 }
 
-HACKNAME="HAKT"
+HACKNAME="Universal_Hotfix"
 logmsg "I" "arch_check" "" "Detected architecture - $ARCH"
-logmsg "I" "hakt_installer" "" "Installing Hotfix (previously bridge)."
+logmsg "I" "Universal_Hotfix_installer" "" "Installing Universal Hotfix (previously bridge)."
 
 ###
 ## Here we go :)
@@ -86,7 +86,7 @@ chmod a+rx "${KMC_PERSISTENT_STORAGE}"/hotfix/jobs/*
 
 logmsg "I" "banner" "" ""
 logmsg "I" "banner" "" ""
-logmsg "I" "banner" "" "HAKT INSTALLER (${HOTFIX_VERSION})"
+logmsg "I" "banner" "" "UNIVERSAL HOTFIX INSTALLER (${HOTFIX_VERSION})"
 logmsg "I" "banner" "" "Installing on arch=${ARCH}"
 logmsg "I" "banner" "" "Based on NiLuJe's hotfix & hotfix installer"
 logmsg "I" "banner" "" "Created by HackerDude"
