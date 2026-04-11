@@ -10,7 +10,7 @@
 ##
 
 # Some variables
-HOTFIX_VERSION="2.3.7"
+HOTFIX_VERSION="2.4.0"
 KMC_PERSISTENT_STORAGE="/var/local/kmc"
 MKK_PERSISTENT_STORAGE="/var/local/mkk"
 KMC_BACKUP_STORAGE="/mnt/us/kmc"

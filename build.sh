@@ -126,4 +126,4 @@ echo "* Generating device list"
 
 echo "* Building Universal Hotfix"
 cd ./build_tmp/src
-${KINDLETOOL} create ota2 -d kindle5 -s min -t max -O -C . "../../build/Update_hotfix_universal.bin"
+${KINDLETOOL} create ota2 -d kindle4 -d kindle5 -s min -t max -O -C . "../../build/Update_hotfix_universal.bin" -x PackagedBy=Hackerdude
