@@ -36,8 +36,6 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-    - name: Remove old Kindletool
-      run: rm -f ./utils/kindletool
     - uses: actions/download-artifact@v4
       with:
         name: kindletool
@@ -62,6 +60,7 @@ jobs:
       run: |
           chmod 755 ./utils/kindletool
           chown -R $USER: ./utils/
+          export PATH=$PATH:$PWD/utils/
           sh ./build.sh
     - uses: actions/upload-artifact@v4
       with:

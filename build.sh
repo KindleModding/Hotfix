@@ -15,9 +15,6 @@ sudo echo
 
 export KT_WITH_UNKNOWN_DEVCODES="1"
 
-# @TODO: This is stupid -HD
-KINDLETOOL="${PWD}/utils/kindletool"
-
 ###
 # Cleanup previous build
 ###
@@ -82,7 +79,7 @@ fi
 cp -r build_cache tmp_build_cache
 
 echo "* Extracting and mounting official firmware"
-${KINDLETOOL} extract ./build_cache/update_kindle_pw6.bin ./build_tmp/official_firmware
+kindletool extract ./build_cache/update_kindle_pw6.bin ./build_tmp/official_firmware
 gunzip ./build_tmp/official_firmware/*rootfs*.img.gz
 mkdir ./build_tmp/official_firmware_mnt/
 sudo mount -o loop ./build_tmp/official_firmware/*rootfs*.img ./build_tmp/official_firmware_mnt/
@@ -118,7 +115,7 @@ rm -rf ./build_tmp/src/kmc
 rm -rf ./build_tmp/src/mkk
 
 echo "* Generating device list"
-#DEVICE_LIST="$(${KINDLETOOL} convert -i tmp_build_cache/update_kindle*.bin 2>&1 | grep -o "^Device .*" | grep -o "0x[[:xdigit:]]*" | tr "\n" " ")"
+#DEVICE_LIST="$(kindletool convert -i tmp_build_cache/update_kindle*.bin 2>&1 | grep -o "^Device .*" | grep -o "0x[[:xdigit:]]*" | tr "\n" " ")"
 #echo $DEVICE_LIST
 
 #DEVICES="$(echo "$DEVICE_LIST" | xargs | sed "s/ / -d /g")"
@@ -126,4 +123,4 @@ echo "* Generating device list"
 
 echo "* Building Universal Hotfix"
 cd ./build_tmp/src
-${KINDLETOOL} create ota2 -d kindle4 -d kindle5 -s min -t max -O -C . "../../build/Update_hotfix_universal.bin" -x PackagedBy=Hackerdude
+kindletool create ota2 -d kindle4 -d kindle5 -s min -t max -O -C . "../../build/Update_hotfix_universal.bin" -x PackagedBy=Hackerdude
