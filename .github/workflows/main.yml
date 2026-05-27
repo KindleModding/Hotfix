@@ -29,7 +29,9 @@ jobs:
 
     steps:
     - name: Setup
-      run: sudo apt-get install meson
+      run: |
+        sudo apt update
+        sudo apt install meson
     - name: Download toolchain
       run: |
           wget -q https://github.com/KindleModding/koxtoolchain/releases/latest/download/kindlepw2.tar.gz -O - | tar -xzf - -C ~
@@ -48,7 +50,8 @@ jobs:
         path: kindle-sdk
     - name: "Setup kindle-sdk"
       run: |
-          sudo apt-get install -y zlib1g-dev libarchive-dev nettle-dev curl
+          sudo apt update
+          sudo apt install -y zlib1g-dev libarchive-dev nettle-dev curl
           bash ./kindle-sdk/gen-sdk.sh kindlepw2
           bash ./kindle-sdk/gen-sdk.sh kindlehf
     - name: Cache Kindle firmware
