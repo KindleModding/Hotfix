@@ -15,7 +15,8 @@ jobs:
         repository: KindleModding/KindleTool
     - name: Compile KindleTool
       run: |
-          sudo apt-get install -y zlib1g-dev libarchive-dev nettle-dev
+          sudo apt update
+          sudo apt install -y zlib1g-dev libarchive-dev nettle-dev
           make
     - uses: actions/upload-artifact@v4
       with:
